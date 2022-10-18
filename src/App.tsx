@@ -1,49 +1,42 @@
+import contracts from "./contracts";
+import { Tab } from '@headlessui/react'
+import NFTStakingTable from "./components/nft/NFTStakingTable";
 import { ConnectWallet } from "@thirdweb-dev/react";
-import "./styles/Home.css";
 
-export default function Home() {
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ')
+}
+
+export default function App() {
   return (
-    <div className="container">
-      <main className="main">
-        <h1 className="title">
-          Welcome to <a href="https://thirdweb.com/">thirdweb</a>!
-        </h1>
-
-        <p className="description">
-          Get started by configuring your desired network in{" "}
-          <code className="code">src/index.tsx</code>, then modify the{" "}
-          <code className="code">src/App.tsx</code> file!
-        </p>
-
-        <div className="connect">
-          <ConnectWallet />
-        </div>
-
-        <div className="grid">
-          <a href="https://portal.thirdweb.com/" className="card">
-            <h2>Portal &rarr;</h2>
-            <p>
-              Guides, references and resources that will help you build with
-              thirdweb.
-            </p>
-          </a>
-
-          <a href="https://thirdweb.com/dashboard" className="card">
-            <h2>Dashboard &rarr;</h2>
-            <p>
-              Deploy, configure and manage your smart contracts from the
-              dashboard.
-            </p>
-          </a>
-
-          <a href="https://portal.thirdweb.com/templates" className="card">
-            <h2>Templates &rarr;</h2>
-            <p>
-              Discover and clone template projects showcasing thirdweb features.
-            </p>
-          </a>
-        </div>
-      </main>
+    <div>
+      <ConnectWallet />
+      <Tab.Group>
+        <Tab.List className="flex justify-center space-x-1 rounded-xl bg-slate-900/20 p-1 w-fit mx-auto mb-16">
+          {contracts.map((tab, key) => (
+            <Tab
+              key={key}
+              className={({ selected }) =>
+                classNames(
+                  'w-full rounded-lg p-2 text-sm font-medium leading-5 text-slate-700',
+                  selected
+                    ? 'bg-white shadow'
+                    : 'text-slate-100 hover:bg-white/[0.12] hover:text-white'
+                )
+              }
+            >
+              {tab.name}
+            </Tab>
+          ))}
+        </Tab.List>
+        <Tab.Panels className="mt-2">
+          {contracts.map((contract, key) => (
+            <Tab.Panel key={key} >
+              <NFTStakingTable contractAddress={contract.address} />
+            </Tab.Panel>
+          ))}
+        </Tab.Panels>
+      </Tab.Group>
     </div>
   );
 }
