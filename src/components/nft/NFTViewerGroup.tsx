@@ -25,13 +25,15 @@ function NFTViewer({ stakingContract, nftDropContract, nft }: INFTViewer) {
     }
 
     return (
-        <>
-            <ThirdwebNftMedia metadata={nft.metadata} />
+        <div className="p-2 rounded-3xl flex flex-col gap-2 w-fit">
+            <div>
+                <ThirdwebNftMedia metadata={nft.metadata} className="max-h-32 rounded-2xl" />
+            </div>
             <h3>{nft.metadata.name}</h3>
-            <button onClick={() => stakeNft(nft.metadata.id)}>
+            <button className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-400" onClick={() => stakeNft(nft.metadata.id)}>
                 Stake
             </button>
-        </>
+        </div>
     )
 }
 
@@ -64,16 +66,20 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
     }
 
     return (
-        <>
-            <div>
-                <button onClick={() => stakeAll()}>
-                    Stake All
-                </button>
-            </div>
-            <div>
-                {ownedNfts?.map((nft) => (<NFTViewer key={nft.metadata.id.toString()} stakingContract={stakingContract} nftDropContract={nftDropContract} nft={nft} />))}
-            </div>
-        </>
+        <div className="flex gap-4">
+            {ownedNfts && ownedNfts.length > 0 ?
+                <div className="flex flex-col gap-4 border-2 border-slate-500 p-4 rounded-3xl">
+                    <div className="flex justify-center">
+                        <button className="bg-blue-500 text-white text-xl font-semibold uppercase rounded px-4 py-2 hover:bg-blue-400" onClick={() => stakeAll()}>
+                            Stake All
+                        </button>
+                    </div>
+                    <div className="flex gap-4">
+                        {ownedNfts?.map((nft) => (<NFTViewer key={nft.metadata.id.toString()} stakingContract={stakingContract} nftDropContract={nftDropContract} nft={nft} />))}
+                    </div>
+                </div> : <></>}
+                
+        </div>
     )
 }
 
