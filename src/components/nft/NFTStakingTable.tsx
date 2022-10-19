@@ -1,6 +1,6 @@
 import { useAddress, useContract, useContractRead, useContractWrite } from "@thirdweb-dev/react"
 import { format, formatDuration, intervalToDuration } from "date-fns"
-import { BaseContract, BigNumber, BigNumberish, ethers } from "ethers"
+import { BigNumber, ethers } from "ethers"
 import { useEffect, useState } from "react"
 import ERC721Staking from "../../abi/ERC721Staking.json"
 import NFTViewerGroup from "./NFTViewerGroup"
@@ -16,27 +16,23 @@ interface IRoundRow {
     index: number
 }
 
-const tdClass = "px-4 py-2 text-right border-t-2 text-sm"
-const headTdClass = "px-4 py-2 text-right text-xs uppercase font-semibold text-slate-600"
+const tdClass = "px-4 py-4 text-right border-t border-slate-500 text-sm text-slate-50"
+const headTdClass = "px-4 py-2 text-right text-xs uppercase font-semibold text-slate-400"
 
 function RoundRow({ stakingContract, index }: IRoundRow) {
 
     const address = useAddress()
 
     const { data: round } = useContractRead(stakingContract, "rounds", index)
-    // const { data: tokensForRound } = useContractRead(stakingContract, "tokensForRound", index)
-    // const { data: tokensByAddress } = useContractRead(stakingContract, "getTokensByAddress", address)
-    // const { data: getTokens } = useContractRead(stakingContract, "getTokens")
-    // const { data: weightedAverageForRound } = useContractRead(stakingContract, "weightedAverageForRound", index)
     const { mutateAsync: claimForRound } = useContractWrite(stakingContract, "claimForRound")
 
-    const { data: getNbTokensForRound } = useContractRead(stakingContract, "getNbTokensForRound", index)
-    const { data: getNbTokensForRoundByAddress } = useContractRead(stakingContract, "getNbTokensForRoundByAddress", index, address)
-    const { data: getWeightedAverageByAddress } = useContractRead(stakingContract, "getWeightedAverageByAddress", index, address)
+    const { data: countDepositsForRound } = useContractRead(stakingContract, "countDepositsForRound", index)
+    const { data: countDepositsForRoundByAddress } = useContractRead(stakingContract, "countDepositsForRoundByAddress", index, address)
+    const { data: weightedAverageForRoundByAddress } = useContractRead(stakingContract, "weightedAverageForRoundByAddress", index, address)
 
-    const { data: getAllocatedByAddress } = useContractRead(stakingContract, "getAllocatedByAddress", index, address)
-    const { data: getClaimedByAddress } = useContractRead(stakingContract, "getClaimedByAddress", index, address)
-    const { data: getUnclaimedByAddress } = useContractRead(stakingContract, "getUnclaimedByAddress", index, address)
+    const { data: ethAllocForRoundByAddress } = useContractRead(stakingContract, "ethAllocForRoundByAddress", index, address)
+    const { data: ethClaimedForRoundByAddress } = useContractRead(stakingContract, "ethClaimedForRoundByAddress", index, address)
+    const { data: ethUnclaimedForRoundByAddress } = useContractRead(stakingContract, "ethUnclaimedForRoundByAddress", index, address)
 
     const [startTime, setStartTime] = useState<number>()
     const [endTime, setEndTime] = useState<number>()
@@ -66,11 +62,14 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
     }
 
     function claimDisabled() {
-        if (!endTime) { return true }
+        if (!address) return true
+        if (!endTime) return true
+        if (!ethUnclaimedForRoundByAddress) return true
+
         if (endTime > Date.now()) {
             return true
         } else {
-            if (getUnclaimedByAddress.gt(0)) {
+            if (ethUnclaimedForRoundByAddress.gt(0)) {
                 return false
             } else {
                 return true
@@ -81,20 +80,20 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
     return (
         <tr>
             <td className={tdClass}>{index}</td>
-            <td className={tdClass}>{ startTime ?  <>{format(startTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
-            <td className={tdClass}>{ endTime ?  <>{format(endTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
-            <td className={tdClass}>{ startTime && endTime ?  <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
-            <td className={tdClass}>{ getNbTokensForRound ? <>{getNbTokensForRound.toString()}</> : <>-</> }</td>
-            <td className={tdClass}>{ getNbTokensForRoundByAddress ? <>{getNbTokensForRoundByAddress.toString()}</> : <>-</> }</td>
-            <td className={tdClass}>{ getWeightedAverageByAddress ? <>{formatNb(getWeightedAverageByAddress.mul(100))}%</> : <>-</> }</td>
-            <td className={tdClass}>{ round ? <>{formatNb(round.amount)}</> : <>-</> }</td>
-            <td className={tdClass}>{ getAllocatedByAddress ? <>{formatNb(getAllocatedByAddress)}</> : <>-</>}</td>
-            <td className={tdClass}>{ getClaimedByAddress ? <>{formatNb(getClaimedByAddress)}</> : <>-</>}</td>
-            <td className={tdClass}>{ getUnclaimedByAddress ? <>{formatNb(getUnclaimedByAddress)}</> : <>-</>}</td>
-            <td className={tdClass}>
-                <button className="px-2 py-1 uppercase rounded bg-emerald-400 text-white fon-semibold hover:bg-emerald-500 disabled:bg-slate-200 disabled:text-slate-300" onClick={() => claimRound()} disabled={claimDisabled()}>
+            <td className={tdClass}>{startTime ? <>{format(startTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
+            <td className={tdClass}>{endTime ? <>{format(endTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
+            <td className={tdClass}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
+            <td className={tdClass}>{countDepositsForRound ? <>{countDepositsForRound.toString()}</> : <>-</>}</td>
+            <td className={tdClass}>{countDepositsForRoundByAddress ? <>{countDepositsForRoundByAddress.toString()}</> : <>-</>}</td>
+            <td className={tdClass}>{weightedAverageForRoundByAddress ? <>{formatNb(weightedAverageForRoundByAddress.mul(100))}%</> : <>-</>}</td>
+            <td className={tdClass}>{round ? <>{formatNb(round.amountAllocated)}</> : <>-</>}</td>
+            <td className={tdClass}>{ethAllocForRoundByAddress ? <>{formatNb(ethAllocForRoundByAddress)}</> : <>-</>}</td>
+            <td className={tdClass}>{ethClaimedForRoundByAddress ? <>{formatNb(ethClaimedForRoundByAddress)}</> : <>-</>}</td>
+            <td className={tdClass}>{ethUnclaimedForRoundByAddress ? <>{formatNb(ethUnclaimedForRoundByAddress)}</> : <>-</>}</td>
+            <td className={`${tdClass} pr-0`}>
+                <button className="px-2 py-1 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-500 disabled:border-slate-100 disabled:bg-slate-200/20  disabled:text-slate-200" onClick={() => claimRound()} disabled={claimDisabled()}>
                     <div className="flex justify-between items-center gap-2">
-                        { claiming ? <Spin /> : <></>}
+                        {claiming ? <Spin /> : <></>}
                         <span>claim</span>
                     </div>
                 </button>
@@ -104,39 +103,41 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
 }
 
 function NFTStakingTable({ contractAddress }: INFTStakingTable) {
-    const address = useAddress()
     const { contract: stakingContract, isLoading, error } = useContract(contractAddress, ERC721Staking.abi)
 
-    const { data: nbRounds, isLoading: isLoadingNbRounds } = useContractRead(stakingContract, "nbRounds")
+    const { data: nbRounds } = useContractRead(stakingContract, "nbRounds")
 
     return (
         <>
             {isLoading ? <div>Loading...</div> : error ? <div>{JSON.stringify(error)}</div> : <>
-                <div className="py-16">
+            <div className="flex flex-col gap-4">
+                <div>
                     <NFTViewerGroup stakingContract={stakingContract} />
                 </div>
-                {/* <div>Rounds: { isLoadingNbRounds ? <></> : <>{nbRounds.toString()}</>}</div> */}
-                <table className="table-auto">
-                    <thead>
-                        <tr>
-                            <td className={headTdClass}>Round</td>
-                            <td className={headTdClass}>Start Time</td>
-                            <td className={headTdClass}>End Time</td>
-                            <td className={headTdClass}>Duration</td>
-                            <td className={headTdClass}>Total Staked</td>
-                            <td className={headTdClass}>Your Stake</td>
-                            <td className={headTdClass}>Allocation</td>
-                            <td className={headTdClass}>Round Amount</td>
-                            <td className={headTdClass}>Allocation</td>
-                            <td className={headTdClass}>Claimed</td>
-                            <td className={headTdClass}>Unclaimed</td>
-                            <td className={headTdClass}></td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { nbRounds ? _.times(nbRounds, (index) => <RoundRow key={index} stakingContract={stakingContract} index={index} />) : <></> }
-                    </tbody>
-                </table>
+                <div className="bg-slate-700 w-full p-4">
+                    <table className="table-auto w-full">
+                        <thead>
+                            <tr>
+                                <td className={headTdClass}>Round</td>
+                                <td className={headTdClass}>Start Time</td>
+                                <td className={headTdClass}>End Time</td>
+                                <td className={headTdClass}>Duration</td>
+                                <td className={headTdClass}>Total Staked</td>
+                                <td className={headTdClass}>Your Stake</td>
+                                <td className={headTdClass}>Allocation</td>
+                                <td className={headTdClass}>Round Amount</td>
+                                <td className={headTdClass}>Allocation</td>
+                                <td className={headTdClass}>Claimed</td>
+                                <td className={headTdClass}>Unclaimed</td>
+                                <td className={headTdClass}></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {nbRounds ? _.times(nbRounds, (index) => <RoundRow key={index} stakingContract={stakingContract} index={index} />) : <></>}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             </>}
         </>
     )

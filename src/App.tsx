@@ -1,7 +1,6 @@
 import contracts from "./contracts";
 import { Tab } from '@headlessui/react'
 import NFTStakingTable from "./components/nft/NFTStakingTable";
-import { ConnectWallet } from "@thirdweb-dev/react";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Container from "./components/layout/Container";
@@ -12,7 +11,7 @@ function classNames(...classes: string[]) {
 
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col justify-between bg-slate-800">
       <div className="flex flex-col gap-8">
         <Header />
         <Container>
