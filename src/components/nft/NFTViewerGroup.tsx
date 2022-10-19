@@ -132,7 +132,8 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
     return (
         <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-4 bg-slate-700 p-4">
-                <div className="flex justify-end">
+                <div className="flex justify-between items-center">
+                    <h3 className="font-semibold text-slate-50">Owned ({ownedNfts?.length})</h3>
                     <button className="text-xs uppercase border border-emerald-400 text-emerald-400 rounded p-2 hover:bg-emerald-400 hover:text-emerald-800" onClick={() => stakeAll()}>
                         <div className="flex justify-between items-center gap-2">
                             {depositing ? <Spin /> : <></>}
@@ -145,7 +146,8 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
                 </div>
             </div>
             <div className="flex flex-col gap-4 bg-slate-700 p-4">
-                <div className="flex justify-end">
+                <div className="flex justify-between items-center">
+                <h3 className="font-semibold text-slate-50">Staked ({myStakedNFTs?.length})</h3>
                     <button className="text-xs uppercase border border-orange-400 text-orange-400 rounded p-2 hover:bg-orange-400 hover:text-orange-800" onClick={() => unstakeAll()}>
                         <div className="flex justify-between items-center gap-2">
                             {withdrawing ? <Spin /> : <></>}

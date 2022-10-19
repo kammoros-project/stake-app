@@ -83,15 +83,18 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
             <td className={tdClass}>{startTime ? <>{format(startTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
             <td className={tdClass}>{endTime ? <>{format(endTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
             <td className={tdClass}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
-            <td className={tdClass}>{countDepositsForRound ? <>{countDepositsForRound.toString()}</> : <>-</>}</td>
-            <td className={tdClass}>{countDepositsForRoundByAddress ? <>{countDepositsForRoundByAddress.toString()}</> : <>-</>}</td>
+            <td className={tdClass}>
+                <span>{countDepositsForRound ? <>{countDepositsForRound.toString()}</> : <>-</>}</span>
+                <span>/</span>
+                <span>{countDepositsForRoundByAddress ? <>{countDepositsForRoundByAddress.toString()}</> : <>-</>}</span>
+            </td>
             <td className={tdClass}>{weightedAverageForRoundByAddress ? <>{formatNb(weightedAverageForRoundByAddress.mul(100))}%</> : <>-</>}</td>
             <td className={tdClass}>{round ? <>{formatNb(round.amountAllocated)}</> : <>-</>}</td>
             <td className={tdClass}>{ethAllocForRoundByAddress ? <>{formatNb(ethAllocForRoundByAddress)}</> : <>-</>}</td>
             <td className={tdClass}>{ethClaimedForRoundByAddress ? <>{formatNb(ethClaimedForRoundByAddress)}</> : <>-</>}</td>
             <td className={tdClass}>{ethUnclaimedForRoundByAddress ? <>{formatNb(ethUnclaimedForRoundByAddress)}</> : <>-</>}</td>
             <td className={`${tdClass} pr-0`}>
-                <button className="px-2 py-1 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-500 disabled:border-slate-100 disabled:bg-slate-200/20  disabled:text-slate-200" onClick={() => claimRound()} disabled={claimDisabled()}>
+                <button className="px-2 py-1 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-100 disabled:bg-slate-200/20  disabled:text-slate-200" onClick={() => claimRound()} disabled={claimDisabled()}>
                     <div className="flex justify-between items-center gap-2">
                         {claiming ? <Spin /> : <></>}
                         <span>claim</span>
@@ -115,14 +118,13 @@ function NFTStakingTable({ contractAddress }: INFTStakingTable) {
                     <NFTViewerGroup stakingContract={stakingContract} />
                 </div>
                 <div className="bg-slate-700 w-full p-4">
-                    <table className="table-auto w-full">
+                    <table className="table-fixed w-full">
                         <thead>
                             <tr>
                                 <td className={headTdClass}>Round</td>
                                 <td className={headTdClass}>Start Time</td>
                                 <td className={headTdClass}>End Time</td>
                                 <td className={headTdClass}>Duration</td>
-                                <td className={headTdClass}>Total Staked</td>
                                 <td className={headTdClass}>Your Stake</td>
                                 <td className={headTdClass}>Allocation</td>
                                 <td className={headTdClass}>Round Amount</td>
