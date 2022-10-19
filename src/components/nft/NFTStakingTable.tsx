@@ -84,9 +84,9 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
             <td className={tdClass}>{endTime ? <>{format(endTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
             <td className={tdClass}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
             <td className={tdClass}>
-                <span>{countDepositsForRound ? <>{countDepositsForRound.toString()}</> : <>-</>}</span>
-                <span>/</span>
                 <span>{countDepositsForRoundByAddress ? <>{countDepositsForRoundByAddress.toString()}</> : <>-</>}</span>
+                <span>/</span>
+                <span>{countDepositsForRound ? <>{countDepositsForRound.toString()}</> : <>-</>}</span>
             </td>
             <td className={tdClass}>{weightedAverageForRoundByAddress ? <>{formatNb(weightedAverageForRoundByAddress.mul(100))}%</> : <>-</>}</td>
             <td className={tdClass}>{round ? <>{formatNb(round.amountAllocated)}</> : <>-</>}</td>
