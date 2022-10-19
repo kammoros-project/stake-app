@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import ERC721Staking from "../../abi/ERC721Staking.json"
 import NFTViewerGroup from "./NFTViewerGroup"
 import _ from "lodash"
+import Spin from "../support/Spin"
 
 interface INFTStakingTable {
     contractAddress: string
@@ -40,8 +41,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
     const [startTime, setStartTime] = useState<number>()
     const [endTime, setEndTime] = useState<number>()
 
-    // const [includedTokenIds, setIncludedTokenIds] = useState<BigNumber[]>()
-    // const [weightedAverage, setWeightedAverage] = useState<BigNumber>()
+    const [claiming, setClaiming] = useState<boolean>(false)
 
     useEffect(() => {
         if (round) {
@@ -60,8 +60,22 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
 
     async function claimRound() {
         if (!address) return;
-
+        setClaiming(true)
         await claimForRound([index])
+        setClaiming(false)
+    }
+
+    function claimDisabled() {
+        if (!endTime) { return true }
+        if (endTime > Date.now()) {
+            return true
+        } else {
+            if (getUnclaimedByAddress.gt(0)) {
+                return false
+            } else {
+                return true
+            }
+        }
     }
 
     return (
@@ -78,7 +92,12 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
             <td className={tdClass}>{ getClaimedByAddress ? <>{formatNb(getClaimedByAddress)}</> : <>-</>}</td>
             <td className={tdClass}>{ getUnclaimedByAddress ? <>{formatNb(getUnclaimedByAddress)}</> : <>-</>}</td>
             <td className={tdClass}>
-                <button className="px-2 py-1 uppercase rounded bg-emerald-400 text-white hover:bg-emerald-500 disabled:bg-slate-300" onClick={() => claimRound()} disabled={endTime ? endTime > Date.now() : true}>claim</button>
+                <button className="px-2 py-1 uppercase rounded bg-emerald-400 text-white fon-semibold hover:bg-emerald-500 disabled:bg-slate-200 disabled:text-slate-300" onClick={() => claimRound()} disabled={claimDisabled()}>
+                    <div className="flex justify-between items-center gap-2">
+                        { claiming ? <Spin /> : <></>}
+                        <span>claim</span>
+                    </div>
+                </button>
             </td>
         </tr>
     )
