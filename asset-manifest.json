@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/stake-app/static/css/main.753b15e5.css",
-    "main.js": "/stake-app/static/js/main.67fd25b7.js",
+    "main.css": "/stake-app/static/css/main.25179ab6.css",
+    "main.js": "/stake-app/static/js/main.376f2a16.js",
     "static/js/874.c79c28a2.chunk.js": "/stake-app/static/js/874.c79c28a2.chunk.js",
     "static/js/799.07e71a90.chunk.js": "/stake-app/static/js/799.07e71a90.chunk.js",
     "static/js/519.9fa1c89d.chunk.js": "/stake-app/static/js/519.9fa1c89d.chunk.js",
@@ -42,8 +42,8 @@
     "static/js/280.7ec94d81.chunk.js": "/stake-app/static/js/280.7ec94d81.chunk.js",
     "static/media/logo.png": "/stake-app/static/media/logo.b4845291b36ca1965d6e.png",
     "index.html": "/stake-app/index.html",
-    "main.753b15e5.css.map": "/stake-app/static/css/main.753b15e5.css.map",
-    "main.67fd25b7.js.map": "/stake-app/static/js/main.67fd25b7.js.map",
+    "main.25179ab6.css.map": "/stake-app/static/css/main.25179ab6.css.map",
+    "main.376f2a16.js.map": "/stake-app/static/js/main.376f2a16.js.map",
     "874.c79c28a2.chunk.js.map": "/stake-app/static/js/874.c79c28a2.chunk.js.map",
     "970.3de05acd.chunk.js.map": "/stake-app/static/js/970.3de05acd.chunk.js.map",
     "737.58a0c21d.chunk.js.map": "/stake-app/static/js/737.58a0c21d.chunk.js.map",
@@ -70,7 +70,7 @@
     "280.7ec94d81.chunk.js.map": "/stake-app/static/js/280.7ec94d81.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.753b15e5.css",
-    "static/js/main.67fd25b7.js"
+    "static/css/main.25179ab6.css",
+    "static/js/main.376f2a16.js"
   ]
 }
