@@ -94,7 +94,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
             <td className={tdClass}>{ethClaimedForRoundByAddress ? <>{formatNb(ethClaimedForRoundByAddress)}</> : <>-</>}</td>
             <td className={tdClass}>{ethUnclaimedForRoundByAddress ? <>{formatNb(ethUnclaimedForRoundByAddress)}</> : <>-</>}</td>
             <td className={`${tdClass} pr-0`}>
-                <button className="px-2 py-1 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-100 disabled:bg-slate-200/20  disabled:text-slate-200" onClick={() => claimRound()} disabled={claimDisabled()}>
+                <button className="px-2 py-1 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-500 disabled:bg-slate-500/20  disabled:text-slate-500" onClick={() => claimRound()} disabled={claimDisabled()}>
                     <div className="flex justify-between items-center gap-2">
                         {claiming ? <Spin /> : <></>}
                         <span>claim</span>
