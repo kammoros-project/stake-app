@@ -134,11 +134,11 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                         <span>{weightedAverageForRoundByAddress ? <>{formatNb(weightedAverageForRoundByAddress.mul(100))}%</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                        <span>Round</span>
+                        <span>Round*</span>
                         <span>{round ? <>{formatNb(round.amountAllocated)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                        <span>Yours</span>
+                        <span>Yours*</span>
                         <span>{ethAllocForRoundByAddress ? <>{formatNb(ethAllocForRoundByAddress)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">

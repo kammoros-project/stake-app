@@ -134,12 +134,13 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
             <div className="flex flex-col gap-4 bg-slate-700 p-4">
                 <div className="flex justify-between items-center">
                     <h3 className="font-semibold text-slate-50">Owned ({ownedNfts?.length})</h3>
-                    <button className="text-xs uppercase border border-emerald-400 text-emerald-400 rounded p-2 hover:bg-emerald-400 hover:text-emerald-800" onClick={() => stakeAll()}>
-                        <div className="flex justify-between items-center gap-2">
-                            {depositing ? <Spin /> : <></>}
-                            <span>Stake All</span>
-                        </div>
-                    </button>
+                    {ownedNfts && ownedNfts.length > 0 &&
+                        <button className="text-xs uppercase border border-emerald-400 text-emerald-400 rounded p-2 hover:bg-emerald-400 hover:text-emerald-800" onClick={() => stakeAll()}>
+                            <div className="flex justify-between items-center gap-2">
+                                {depositing ? <Spin /> : <></>}
+                                <span>Stake All</span>
+                            </div>
+                        </button>}
                 </div>
                 <div className="flex flex-col">
                     {ownedNfts?.map((nft) => (<NFTViewer key={nft.metadata.id.toString()} stakingContract={stakingContract} nftDropContract={nftDropContract} nft={nft} />))}
@@ -147,13 +148,14 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
             </div>
             <div className="flex flex-col gap-4 bg-slate-700 p-4">
                 <div className="flex justify-between items-center">
-                <h3 className="font-semibold text-slate-50">Staked ({myStakedNFTs?.length})</h3>
-                    <button className="text-xs uppercase border border-orange-400 text-orange-400 rounded p-2 hover:bg-orange-400 hover:text-orange-800" onClick={() => unstakeAll()}>
-                        <div className="flex justify-between items-center gap-2">
-                            {withdrawing ? <Spin /> : <></>}
-                            <span>Unstake All</span>
-                        </div>
-                    </button>
+                    <h3 className="font-semibold text-slate-50">Staked ({myStakedNFTs?.length})</h3>
+                    {myStakedNFTs && myStakedNFTs.length > 0 &&
+                        <button className="text-xs uppercase border border-orange-400 text-orange-400 rounded p-2 hover:bg-orange-400 hover:text-orange-800" onClick={() => unstakeAll()}>
+                            <div className="flex justify-between items-center gap-2">
+                                {withdrawing ? <Spin /> : <></>}
+                                <span>Unstake All</span>
+                            </div>
+                        </button>}
                 </div>
                 <div className="flex flex-col">
                     {myStakedNFTs?.map((nft) => (<NFTViewer key={nft.metadata.id.toString()} stakingContract={stakingContract} nftDropContract={nftDropContract} nft={nft} staked={true} />))}
