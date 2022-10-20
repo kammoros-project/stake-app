@@ -130,7 +130,7 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
     }
 
     return (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid lg:grid-cols-2 gap-4">
             <div className="flex flex-col gap-4 bg-slate-700 p-4">
                 <div className="flex justify-between items-center">
                     <h3 className="font-semibold text-slate-50">Owned ({ownedNfts?.length})</h3>

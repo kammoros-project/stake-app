@@ -54,7 +54,7 @@ function TokenForm({ stakingContract }: ITokenForm) {
                     </div>
                     <div className="flex items-center">
                         <div className="grow flex flex-col gap-2">
-                            <input defaultValue={"0"} type={"number"} {...register("amount", { required: true })} className="outline-0 text-xl bg-transparent text-white" />
+                            <input defaultValue={"0"} type={"number"} {...register("amount", { required: true })} className="outline-0 text-xl bg-transparent text-white w-full" />
                         </div>
                         <div className="flex items-end gap-2">
                             <button className="font-semibold text-emerald-500 py-1 px-2 border-2 border-emerald-500 rounded hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-50/10" onClick={() => setMax()} type="button">MAX</button>

@@ -23,7 +23,7 @@ export default function App() {
                   key={key}
                   className={({ selected }) =>
                     classNames(
-                      'w-full rounded-lg p-2 text-sm font-medium leading-5 text-slate-700 outline-0',
+                      'w-full rounded-lg p-2 text-xs md:text-sm font-medium leading-5 text-slate-700 outline-0',
                       selected
                         ? 'bg-white shadow'
                         : 'text-slate-100 hover:bg-white/[0.12] hover:text-white'
