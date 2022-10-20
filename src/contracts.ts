@@ -1,10 +1,10 @@
 const contracts = [
-    { name: "KMCToken", address: `0xe43Eb07C9F644a5F696AC9d6Cf2c5D387bD99EAF`, nft: false },
-    { name: "Cinnamon NFT", address: "0x2d0130e3Bae88a0518AE79aED1aa7d3403b91596", nft: true },
-    { name: "Amazon Staking", address: "0x000cFecb1c079fe35829FDe49271838F2CB21458", nft: true },
-    { name: "White Staking", address: "0x1dDC6BcE5C90abB4D5f58b8eCd1169D1Ea2e8F76", nft: true },
-    { name: "Pink Staking", address: "0x2cd6b5ef030c0059f538930E9E59c5055347423c", nft: true },
-    { name: "Whiteleg Staking", address: "0xe585997183e2ffE1C11b4acb609F433e84C83a51", nft: true },
+    { name: "KMCToken", address: `0x1875C1D0cC2727Ec1A74f90dB591A80d155B0845`, nft: false },
+    { name: "Cinnamon NFT", address: "0x5DcC100d0882d044493AbDC7Dcd36340c2dC0d76", nft: true },
+    { name: "Amazon Staking", address: "0xcDb0aD27EAffb967ad6F7887a3E86397a260f350", nft: true },
+    { name: "White Staking", address: "0xEA2195ba96333AB71B0E926312b3dD63ffCb75ae", nft: true },
+    { name: "Pink Staking", address: "0xAB1A8eFC31758611a98c8433512A549C67587994", nft: true },
+    { name: "Whiteleg Staking", address: "0x63330C8A02E1cD0f2a8dAc98fEb2d7e380e2fa42", nft: true },
 ]
 
 export default contracts

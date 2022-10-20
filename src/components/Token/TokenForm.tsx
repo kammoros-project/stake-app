@@ -50,7 +50,7 @@ function TokenForm({ stakingContract }: ITokenForm) {
                 <div className="grow flex flex-col bg-white/10 p-4 gap-2">
                     <div className="flex justify-between text-slate-400 text-sm">
                         <div className="text-xs">Amount</div>
-                        {balance ? <div className="text-xs">Balance: {ethers.utils.formatEther(balance)}</div> : <></>}
+                        {balance ? <div className="text-xs">Balance: {ethers.utils.commify(ethers.utils.formatEther(balance))}</div> : <></>}
                     </div>
                     <div className="flex items-center">
                         <div className="grow flex flex-col gap-2">

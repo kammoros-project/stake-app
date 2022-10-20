@@ -16,8 +16,8 @@ interface IRoundRow {
     index: number
 }
 
-const tdClass = "px-4 py-4 text-right border-t border-slate-500 text-sm text-slate-50"
-const headTdClass = "px-4 py-2 text-right text-xs uppercase font-semibold text-slate-400"
+const tdClass = "px-3 py-4 text-right border-t border-slate-500 text-sm text-slate-50"
+const headTdClass = "px-3 py-2 text-right text-xs uppercase font-semibold text-slate-400"
 
 function RoundRow({ stakingContract, index }: IRoundRow) {
 
@@ -50,7 +50,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
         }
     }, [round])
 
-    function formatNb(bn: BigNumber, dp: number = 4) {
+    function formatNb(bn: BigNumber, dp: number = 2) {
         return (+ethers.utils.formatEther(bn)).toFixed(dp)
     }
 
@@ -80,9 +80,9 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
     return (
         <tr>
             <td className={tdClass}>{index}</td>
-            <td className={tdClass}>{startTime ? <>{format(startTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
-            <td className={tdClass}>{endTime ? <>{format(endTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
-            <td className={tdClass}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
+            <td className={tdClass} colSpan={2}>{startTime ? <>{(new Date(startTime)).toUTCString()}</> : <></>}</td>
+            <td className={tdClass} colSpan={2}>{endTime ? <>{(new Date(endTime)).toUTCString()}</> : <></>}</td>
+            <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
             <td className={tdClass}>
                 <span>{amountStakedForRoundByAddress ? <>{ethers.utils.formatEther(amountStakedForRoundByAddress)}</> : <>-</>}</span>
                 <span>/</span>
@@ -93,7 +93,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
             <td className={tdClass}>{ethAllocForRoundByAddress ? <>{formatNb(ethAllocForRoundByAddress)}</> : <>-</>}</td>
             <td className={tdClass}>{ethClaimedForRoundByAddress ? <>{formatNb(ethClaimedForRoundByAddress)}</> : <>-</>}</td>
             <td className={tdClass}>{ethUnclaimedForRoundByAddress ? <>{formatNb(ethUnclaimedForRoundByAddress)}</> : <>-</>}</td>
-            <td className={`${tdClass} pr-0`}>
+            <td className={`${tdClass} pr-0`} colSpan={2}>
                 <button className="px-2 py-1 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-500 disabled:bg-slate-500/20  disabled:text-slate-500" onClick={() => claimRound()} disabled={claimDisabled()}>
                     <div className="flex justify-between items-center gap-2">
                         {claiming ? <Spin /> : <></>}
@@ -160,20 +160,20 @@ function TokenStakingTable({ contractAddress }: ITokenStakingTable) {
                         </div>
                     </div>
                     <div className="bg-slate-700 w-full p-4">
-                        <table className="table-fixed w-full">
+                        <table className="table-auto w-full">
                             <thead>
                                 <tr>
-                                    <td className={headTdClass}>Round</td>
-                                    <td className={headTdClass}>Start Time</td>
-                                    <td className={headTdClass}>End Time</td>
-                                    <td className={headTdClass}>Duration</td>
-                                    <td className={headTdClass}>Your Stake</td>
-                                    <td className={headTdClass}>Allocation</td>
-                                    <td className={headTdClass}>Round Amount</td>
-                                    <td className={headTdClass}>Allocation</td>
-                                    <td className={headTdClass}>Claimed</td>
-                                    <td className={headTdClass}>Unclaimed</td>
-                                    <td className={headTdClass}></td>
+                                    <td className={headTdClass}>#</td>
+                                    <td className={headTdClass} colSpan={2}>Start Time</td>
+                                    <td className={headTdClass} colSpan={2}>End Time</td>
+                                    <td className={headTdClass} colSpan={2}>Duration</td>
+                                    <td className={headTdClass}>Stake</td>
+                                    <td className={headTdClass}>%</td>
+                                    <td className={headTdClass}>Round*</td>
+                                    <td className={headTdClass}>Yours*</td>
+                                    <td className={headTdClass}>Claimed*</td>
+                                    <td className={headTdClass}>Unclaimed*</td>
+                                    <td className={`${headTdClass} pr-0`} colSpan={2}>*BNB</td>
                                 </tr>
                             </thead>
                             <tbody>
