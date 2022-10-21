@@ -124,9 +124,9 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                     <div className="flex justify-between items-center">
                         <span>Stake</span>
                         <div>
-                            <span>{amountStakedForRoundByAddress ? <>{amountStakedForRoundByAddress.toString()}</> : <>-</>}</span>
+                            <span>{amountStakedForRoundByAddress ? <>{formatNb(amountStakedForRoundByAddress, 0)}</> : <>-</>}</span>
                             <span>/</span>
-                            <span>{amountStakedForRound ? <>{amountStakedForRound.toString()}</> : <>-</>}</span>
+                            <span>{amountStakedForRound ? <>{formatNb(amountStakedForRound, 0)}</> : <>-</>}</span>
                         </div>
                     </div>
                     <div className="flex justify-between items-center">
