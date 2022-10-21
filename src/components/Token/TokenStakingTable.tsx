@@ -207,9 +207,9 @@ function TokenStakingTable({ contractAddress }: ITokenStakingTable) {
                             <h3 className="font-semibold text-slate-50">Owned</h3>
                             <TokenInput stakingContract={stakingContract} />
                         </div>
-                        <div className="flex justify-between bg-slate-700 p-4">
+                        <div className="flex justify-between bg-slate-700 p-4 text-slate-50">
                             <h3 className="font-semibold text-slate-50">Staked: {balanceOf ? <>{ethers.utils.formatEther(balanceOf)}</> : <>-</>}</h3>
-                            {balanceOf && (balanceOf as BigNumber).gt(0) &&
+                            {balanceOf && (balanceOf as BigNumber).gt(0) ?
                                 <div>
                                     <button className="text-xs uppercase border border-orange-400 text-orange-400 rounded p-2 hover:bg-orange-400 hover:text-orange-800" onClick={() => withdraw()}>
                                         <div className="flex justify-between items-center gap-2">
@@ -217,7 +217,7 @@ function TokenStakingTable({ contractAddress }: ITokenStakingTable) {
                                             <span>Withdraw Tokens</span>
                                         </div>
                                     </button>
-                                </div>}
+                                </div> : <div>Buy $KMC on <a className="text-blue-300 hover:underline" href="https://pancakeswap.finance/swap?outputCurrency=0x0974e5F2772a998301D7D6e9aca3F74d80Eef709">PancakeSwap</a>.</div>}
                         </div>
                     </div>
                     <div className="bg-slate-700 w-full p-4">

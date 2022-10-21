@@ -132,15 +132,15 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
     return (
         <div className="grid lg:grid-cols-2 gap-4">
             <div className="flex flex-col gap-4 bg-slate-700 p-4">
-                <div className="flex justify-between items-center">
-                    <h3 className="font-semibold text-slate-50">Owned ({ownedNfts?.length})</h3>
-                    {ownedNfts && ownedNfts.length > 0 &&
+                <div className="flex justify-between items-center text-slate-50">
+                    <h3 className="font-semibold">Owned ({ownedNfts?.length})</h3>
+                    {ownedNfts && ownedNfts.length > 0 ?
                         <button className="text-xs uppercase border border-emerald-400 text-emerald-400 rounded p-2 hover:bg-emerald-400 hover:text-emerald-800" onClick={() => stakeAll()}>
                             <div className="flex justify-between items-center gap-2">
                                 {depositing ? <Spin /> : <></>}
                                 <span>Stake All</span>
                             </div>
-                        </button>}
+                        </button> : <div>Mint NFTs on <a className="text-blue-300 hover:underline" href="https://mint.kammorostoken.com/">mint.kammorostoken.com</a></div>}
                 </div>
                 <div className="flex flex-col">
                     {ownedNfts?.map((nft) => (<NFTViewer key={nft.metadata.id.toString()} stakingContract={stakingContract} nftDropContract={nftDropContract} nft={nft} />))}
