@@ -85,9 +85,9 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                 <td className={tdClass} colSpan={2}>{endTime ? <>{(new Date(endTime)).toUTCString()}</> : <></>}</td>
                 <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
                 <td className={tdClass}>
-                    <span>{amountStakedForRoundByAddress ? <>{ethers.utils.formatEther(amountStakedForRoundByAddress)}</> : <>-</>}</span>
+                    <span>{amountStakedForRoundByAddress ? <>{formatNb(amountStakedForRoundByAddress, 0)}</> : <>-</>}</span>
                     <span>/</span>
-                    <span>{amountStakedForRound ? <>{ethers.utils.formatEther(amountStakedForRound)}</> : <>-</>}</span>
+                    <span>{amountStakedForRound ? <>{formatNb(amountStakedForRound, 0)}</> : <>-</>}</span>
                 </td>
                 <td className={tdClass}>{weightedAverageForRoundByAddress ? <>{formatNb(weightedAverageForRoundByAddress.mul(100))}%</> : <>-</>}</td>
                 <td className={tdClass}>{round ? <>{formatNb(round.amountAllocated)}</> : <>-</>}</td>
