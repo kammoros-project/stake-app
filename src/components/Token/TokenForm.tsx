@@ -1,6 +1,5 @@
 import { useAddress, useContract, useContractRead, useContractWrite } from "@thirdweb-dev/react";
 import { BigNumber, ethers } from "ethers";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import KMCToken from "../../abi/KMCToken.json"
 import Spin from "../support/Spin";
