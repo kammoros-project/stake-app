@@ -1,7 +1,5 @@
 import { FaTimes } from "react-icons/fa"
 import Spin from "./Spin"
-import { useContext, useEffect, useState } from "react"
-import { NotificationContext } from "../../providers/NotificationProvider"
 import useNotifications from "../../hooks/useNotifications"
 import { INotificationExt } from "../../types/notification.types"
 import { Transition } from "@headlessui/react"
@@ -47,7 +45,7 @@ function Notification({ id, status, heading, message }: INotificationExt) {
                     <div className="flex flex-col gap-2">
                         <div className="flex justify-between">
                             <div className="flex items-center gap-2">
-                                {status == "loading" && <Spin />}
+                                {status === "loading" && <Spin />}
                                 <h4 className="font-semibold">{heading}</h4>
                             </div>
                             <button onClick={() => removeNotification(id)}><FaTimes /></button>

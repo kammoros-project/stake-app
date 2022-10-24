@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 import { INotification, INotificationExt, NotificationContextType } from "../types/notification.types";
 
 export const NotificationContext = createContext<NotificationContextType | null>(null)

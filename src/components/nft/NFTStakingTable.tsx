@@ -70,7 +70,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
         }
 
         updateNotifications()
-    }, [round])
+    }, [round, addNotification, removeNotification, claimStatus, loadingNotificationId])
 
     function formatNb(bn: BigNumber, dp: number = 2) {
         return (+ethers.utils.formatEther(bn)).toFixed(dp)

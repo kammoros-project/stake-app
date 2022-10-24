@@ -1,9 +1,7 @@
 import { ThirdwebNftMedia, useAddress, useContract, useContractRead, useContractWrite, useOwnedNFTs } from "@thirdweb-dev/react"
-import { NFT, NFTDrop, TransactionError } from "@thirdweb-dev/sdk"
-import { useContext, useEffect, useState } from "react"
+import { NFT, NFTDrop } from "@thirdweb-dev/sdk"
+import { useEffect, useState } from "react"
 import useNotifications from "../../hooks/useNotifications"
-import { NotificationContext } from "../../providers/NotificationProvider"
-import { NotificationContextType } from "../../types/notification.types"
 import Spin from "../support/Spin"
 
 interface INFTViewer {
@@ -79,7 +77,7 @@ function NFTViewer({ stakingContract, nftDropContract, nft, staked = false }: IN
         }
 
         updateNotifications()
-    }, [depositStatus, withdrawlStatus])
+    }, [depositStatus, withdrawlStatus, addNotification, removeNotification, loadingNotificationId])
 
     return (
         <div className="py-1 flex items-center justify-between">
@@ -180,7 +178,7 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
 
         updateNotifications()
 
-    }, [depositedTokenIdsForAddress, stakedNfts, depositStatus, withdrawlStatus])
+    }, [depositedTokenIdsForAddress, stakedNfts, depositStatus, withdrawlStatus, loadingNotificationId, addNotification, removeNotification])
 
     async function stakeAll() {
         if (!address) return;
