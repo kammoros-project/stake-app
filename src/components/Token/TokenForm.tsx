@@ -16,18 +16,14 @@ function TokenForm({ stakingContract }: ITokenForm) {
     const { contract: tokenContract } = useContract(tokenAddress, KMCToken.abi)
     const { data: balance } = useContractRead(tokenContract, "balanceOf", address)
     const { data: allowance } = useContractRead(tokenContract, "allowance", address, stakingContract.getAddress())
-    const { mutateAsync: depositToken } = useContractWrite(stakingContract, "depositToken")
-    const { mutateAsync: approve } = useContractWrite(tokenContract, "approve")
-
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const { mutateAsync: depositToken, isLoading: isDepositing } = useContractWrite(stakingContract, "depositToken")
+    const { mutateAsync: approve, isLoading: isApproving } = useContractWrite(tokenContract, "approve")
 
     const { register, setValue, handleSubmit } = useForm();
     async function onSubmit(data: any) {
         if (!address) return
         if (!balance) return
         if (!allowance) return
-
-        setIsSubmitting(true)
 
         const amount = ethers.utils.parseEther(data.amount)
 
@@ -36,8 +32,6 @@ function TokenForm({ stakingContract }: ITokenForm) {
         }
 
         await depositToken([amount])
-
-        setIsSubmitting(false)
     }
 
     function setMax() {
@@ -60,7 +54,7 @@ function TokenForm({ stakingContract }: ITokenForm) {
                             <button className="font-semibold text-emerald-500 py-1 px-2 border-2 border-emerald-500 rounded hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-50/10" onClick={() => setMax()} type="button">MAX</button>
                             <button className="font-semibold text-emerald-50 py-1 px-2 border-2 border-emerald-500 bg-emerald-500 uppercase rounded hover:border-emerald-400 hover:bg-emerald-400" type="submit">
                                 <div className="flex items-center gap-2">
-                                    {isSubmitting ? <Spin /> : <></>}
+                                    {(isApproving || isDepositing) && <Spin />}
                                     <span>Stake</span>
                                 </div>
                             </button>

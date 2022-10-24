@@ -6,6 +6,7 @@ import ERC721Staking from "../../abi/ERC721Staking.json"
 import NFTViewerGroup from "./NFTViewerGroup"
 import _ from "lodash"
 import Spin from "../support/Spin"
+import useNotifications from "../../hooks/useNotifications"
 
 interface INFTStakingTable {
     contractAddress: string
@@ -22,9 +23,10 @@ const headTdClass = "px-3 py-2 text-right text-xs uppercase font-semibold text-s
 function RoundRow({ stakingContract, index }: IRoundRow) {
 
     const address = useAddress()
+    const { addNotification, removeNotification } = useNotifications()
 
     const { data: round } = useContractRead(stakingContract, "rounds", index)
-    const { mutateAsync: claimForRound } = useContractWrite(stakingContract, "claimForRound")
+    const { mutateAsync: claimForRound, isLoading: isClaiming, status: claimStatus } = useContractWrite(stakingContract, "claimForRound")
 
     const { data: countDepositsForRound } = useContractRead(stakingContract, "countDepositsForRound", index)
     const { data: countDepositsForRoundByAddress } = useContractRead(stakingContract, "countDepositsForRoundByAddress", index, address)
@@ -37,7 +39,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
     const [startTime, setStartTime] = useState<number>()
     const [endTime, setEndTime] = useState<number>()
 
-    const [claiming, setClaiming] = useState<boolean>(false)
+    const [loadingNotificationId, setLoadingNotificationId] = useState<number>()
 
     useEffect(() => {
         if (round) {
@@ -48,6 +50,26 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
             endTime = endTime.mul(1000)
             setEndTime(endTime.toNumber())
         }
+
+        function updateNotifications() {
+            switch (claimStatus) {
+                case "loading":
+                    setLoadingNotificationId(addNotification({ status: claimStatus, heading: "Processing Transaction", message: `Your rewards are being claimed. Please wait while this transaction is processed.`, autoExpire: false }))
+                    break;
+                case "error":
+                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
+                    addNotification({ status: claimStatus, heading: "Transaction Error", message: "Oops! Something went wrong! Please try again later.", autoExpire: true })
+                    break;
+                case "success":
+                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
+                    addNotification({ status: claimStatus, heading: "Transaction Success", message: "Congratulations! Your rewards were successfully claimed.", autoExpire: true })
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        updateNotifications()
     }, [round])
 
     function formatNb(bn: BigNumber, dp: number = 2) {
@@ -56,9 +78,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
 
     async function claimRound() {
         if (!address) return;
-        setClaiming(true)
         await claimForRound([index])
-        setClaiming(false)
     }
 
     function claimDisabled() {
@@ -97,7 +117,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                 <td className={`${tdClass} pr-0`} colSpan={2}>
                     <button className="px-2 py-1 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-500 disabled:bg-slate-500/20  disabled:text-slate-500" onClick={() => claimRound()} disabled={claimDisabled()}>
                         <div className="flex justify-between items-center gap-2">
-                            {claiming ? <Spin /> : <></>}
+                            {isClaiming && <Spin />}
                             <span>claim</span>
                         </div>
                     </button>
@@ -152,7 +172,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                     <div className="flex justify-between items-center">
                         <button className="w-full px-auto py-2 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-500 disabled:bg-slate-500/20  disabled:text-slate-500" onClick={() => claimRound()} disabled={claimDisabled()}>
                             <div className="flex justify-center items-center gap-2">
-                                {claiming ? <Spin /> : <></>}
+                                {isClaiming && <Spin />}
                                 <span>claim</span>
                             </div>
                         </button>
