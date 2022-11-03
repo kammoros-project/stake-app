@@ -1,5 +1,5 @@
 import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
-import { ethers } from "ethers"
+import { BigNumber, ethers } from "ethers"
 import { useState, useEffect } from "react"
 import ERC721Staking from "../../../abi/ERC721Staking.json"
 import NFTWithdrawButton from "../withdrawl/NFTWithdrawButton"
@@ -30,7 +30,7 @@ export default function StakedNFTList({ contractAddress }: IStakedNFTList) {
 
     return (
         <div className="bg-slate-700 text-slate-50 p-4 rounded-lg">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col justify-between gap-4 h-full">
             <div className="flex justify-between items-center text-slate-50">
                     <div className="font-semibold flex gap-1 items-center">
                         { isLoadingDepositedTokenIdsForAddress ? 
@@ -40,7 +40,7 @@ export default function StakedNFTList({ contractAddress }: IStakedNFTList) {
                         }
                         <div>Staked</div>
                     </div>
-                    { depositedTokenIdsForAddress ? <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[depositedTokenIdsForAddress]} text="Withdraw All" /> : <div className="animate-pulse bg-slate-200 w-24 h-4 rounded-full" />}
+                    { depositedTokenIdsForAddress?.length > 0 && <NFTWithdrawButton contractAddress={contractAddress} tokenIds={depositedTokenIdsForAddress.map((bn: BigNumber) => bn.toNumber())} text="Withdraw All" />}
                 </div>
             <div>
                 { statusBalanceOf == "loading" && <div className="text-center animate-pulse">Loading balance</div> }

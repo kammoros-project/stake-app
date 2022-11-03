@@ -7,7 +7,7 @@ import NFTWithdrawDialog from "../dialogs/NFTWithdrawDialog"
 
 interface INFTWithdrawButton {
     contractAddress: string
-    tokenIds: BigNumber[]
+    tokenIds: number[]
     text?: string
 }
 

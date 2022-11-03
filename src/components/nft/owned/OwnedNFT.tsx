@@ -1,15 +1,15 @@
-import { useContract, useContractRead } from "@thirdweb-dev/react"
+import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
 import { BigNumber } from "ethers"
 import { useState, useEffect } from "react"
-import NFTWithdrawButton from "../withdrawl/NFTWithdrawButton"
+// import NFTWithdrawButton from "../withdrawl/NFTWithdrawButton"
 
 const REPLACE_FROM = "ipfs://"
 const REPLACE_TO = "https://ipfs.io/ipfs/"
 
-interface IStakedNFT {
+interface IOwnedNFT {
     contractAddress: string
     nftDropAddress: string
-    tokenId: BigNumber
+    index: number
 }
 
 interface IMetadata {
@@ -17,10 +17,12 @@ interface IMetadata {
     image: string
 }
 
-export default function StakedNFT({ contractAddress, nftDropAddress, tokenId }: IStakedNFT) {
+export default function OwnedNFT({ contractAddress, nftDropAddress, index }: IOwnedNFT) {
 
+    const address = useAddress()
     const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
-    const { data: tokenURI, status } = useContractRead(nftDropContract, "tokenURI", tokenId)
+    const { data: tokenId, status: statusTokenId } = useContractRead(nftDropContract, "tokenOfOwnerByIndex", address, index)
+    const { data: tokenURI, status: statusTokenURI } = useContractRead(nftDropContract, "tokenURI", tokenId)
     const [metadata, setMetadata] = useState<IMetadata>()
 
     useEffect(() => {
@@ -46,7 +48,7 @@ export default function StakedNFT({ contractAddress, nftDropAddress, tokenId }: 
                         <h3>{metadata.name}</h3>
                     </div>
                     <div>
-                        <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[tokenId.toNumber()]} />
+                        {/* <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[tokenId.toNumber()]} /> */}
                     </div>
                 </div>
                 : <div className="flex justify-between items-center">
