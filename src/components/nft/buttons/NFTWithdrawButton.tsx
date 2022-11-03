@@ -2,19 +2,17 @@ import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
 import { BigNumber, ethers } from "ethers"
 import { useState } from "react"
 import { FaArrowAltCircleDown } from "react-icons/fa"
-import ERC721Staking from "../../../abi/ERC721Staking.json"
 import NFTWithdrawDialog from "../dialogs/NFTWithdrawDialog"
 
 interface INFTWithdrawButton {
     contractAddress: string
-    tokenIds: number[]
+    tokenIds: BigNumber[]
     text?: string
 }
 
 export default function NFTWithdrawButton({ contractAddress, tokenIds, text = "Withdraw" }: INFTWithdrawButton) {
 
     const address = useAddress()
-    const { contract } = useContract(contractAddress, ERC721Staking.abi)
 
     let [isOpen, setIsOpen] = useState(false)
 

@@ -1,6 +1,7 @@
 import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
 import { BigNumber } from "ethers"
 import { useState, useEffect } from "react"
+import NFTDepositButton from "../buttons/NFTDepositButton"
 // import NFTWithdrawButton from "../withdrawl/NFTWithdrawButton"
 
 const REPLACE_FROM = "ipfs://"
@@ -49,6 +50,7 @@ export default function OwnedNFT({ contractAddress, nftDropAddress, index }: IOw
                     </div>
                     <div>
                         {/* <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[tokenId.toNumber()]} /> */}
+                        <NFTDepositButton contractAddress={contractAddress} tokenIds={[tokenId]} />
                     </div>
                 </div>
                 : <div className="flex justify-between items-center">

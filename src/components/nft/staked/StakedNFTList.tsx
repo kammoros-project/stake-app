@@ -2,7 +2,7 @@ import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
 import { BigNumber, ethers } from "ethers"
 import { useState, useEffect } from "react"
 import ERC721Staking from "../../../abi/ERC721Staking.json"
-import NFTWithdrawButton from "../withdrawl/NFTWithdrawButton"
+import NFTWithdrawButton from "../buttons/NFTWithdrawButton"
 import StakedNFTFilter from "./StakedNFTFilter"
 
 interface IStakedNFTList {

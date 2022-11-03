@@ -12,7 +12,7 @@ import { TransactionError } from '@thirdweb-dev/sdk'
 const tdClass = "text-sm text-right py-1 text-slate-900 border-slate-200"
 
 interface IStatusView {
-    tokenIds: number[]
+    tokenIds: BigNumber[]
 }
 
 function LoadingView({ tokenIds }: IStatusView) {
@@ -21,7 +21,7 @@ function LoadingView({ tokenIds }: IStatusView) {
             <h4 className="text-sm text-slate-400 uppercase">Step 1 of 1</h4>
             <FaSpinner className="animate-spin h-6 w-6" />
             <h3 className="font-semibold uppercase text-slate-900">Withdrawing NFT(s)</h3>
-            <h3 className="font-semibold uppercase text-slate-400">{tokenIds.map((num, key) => <span key={key}>{num}</span>)}</h3>
+            <h3 className="font-semibold uppercase text-slate-400">{tokenIds.map((bn, key) => <span key={key}>#{bn.toString()}, </span>)}</h3>
             <p className="text-slate-400">Confirm this transaction in your wallet</p>
         </div>
     )
@@ -55,7 +55,7 @@ function SuccessView({ tokenIds }: IStatusView) {
             <h4 className="text-sm text-slate-400 uppercase">Congratulations</h4>
             <FaCheckCircle className="text-emerald-500 h-6 w-6" />
             <h3 className="font-semibold uppercase text-emerld-900">Withdrew NFT</h3>
-            <h3 className="font-semibold uppercase text-slate-400">{tokenIds.map((num, key) => <span key={key}>{num}</span>)}</h3>
+            <h3 className="font-semibold uppercase text-slate-400">{tokenIds.map((bn, key) => <span key={key}>#{bn.toString()}, </span>)}</h3>
             <p className="text-slate-400">The NFT has been transferred to your wallet.</p>
         </div>
     )
@@ -89,7 +89,7 @@ export default function NFTWithdrawDialog({ contractAddress, tokenIds, isOpen, o
                 {status === "idle" &&
                     <>
                         <div className='text-center'>
-                            <h3 className="font-semibold uppercase text-slate-400">{tokenIds?.map((num, key) => <span key={key}>{num}</span>)}</h3>
+                        <h3 className="font-semibold uppercase text-slate-400">{tokenIds.map((bn, key) => <span key={key}>#{bn.toString()}, </span>)}</h3>
                         </div>
                         <button
                             type="button"

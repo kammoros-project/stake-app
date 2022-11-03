@@ -1,7 +1,7 @@
 import { useContract, useContractRead } from "@thirdweb-dev/react"
 import { BigNumber } from "ethers"
 import { useState, useEffect } from "react"
-import NFTWithdrawButton from "../withdrawl/NFTWithdrawButton"
+import NFTWithdrawButton from "../buttons/NFTWithdrawButton"
 
 const REPLACE_FROM = "ipfs://"
 const REPLACE_TO = "https://ipfs.io/ipfs/"
@@ -46,7 +46,7 @@ export default function StakedNFT({ contractAddress, nftDropAddress, tokenId }: 
                         <h3>{metadata.name}</h3>
                     </div>
                     <div>
-                        <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[tokenId.toNumber()]} />
+                        <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[tokenId]} />
                     </div>
                 </div>
                 : <div className="flex justify-between items-center">

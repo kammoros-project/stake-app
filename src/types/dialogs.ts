@@ -24,5 +24,10 @@ export interface IWithdrawDialog extends IDialog {
 
 export interface INFTWithdrawDialog extends IDialog {
     contractAddress: string
-    tokenIds: number[]
+    tokenIds: BigNumber[]
+}
+
+export interface INFTDepositDialog extends IDialog {
+    contractAddress: string
+    tokenIds: BigNumber[]
 }
