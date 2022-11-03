@@ -1,0 +1,55 @@
+import { useContract, useContractRead } from "@thirdweb-dev/react"
+import { BigNumber } from "ethers"
+import { useState, useEffect } from "react"
+import NFTWithdrawButton from "../withdrawl/NFTWithdrawButton"
+
+const REPLACE_FROM = "ipfs://"
+const REPLACE_TO = "https://ipfs.io/ipfs/"
+
+interface IStakedNFT {
+    contractAddress: string
+    nftDropAddress: string
+    tokenId: BigNumber
+}
+
+interface IMetadata {
+    name: string
+    image: string
+}
+
+export default function StakedNFT({ contractAddress, nftDropAddress, tokenId }: IStakedNFT) {
+
+    const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
+    const { data: tokenURI, status } = useContractRead(nftDropContract, "tokenURI", tokenId)
+    const [metadata, setMetadata] = useState<IMetadata>()
+
+    useEffect(() => {
+
+        const fetchMetadata = async (tokenURI: string) => {
+            const httpURI = tokenURI.replace(REPLACE_FROM, REPLACE_TO)
+            const response = await fetch(httpURI)
+            const json = await response.json()
+            setMetadata(json)
+        }
+
+        if (tokenURI) {
+            fetchMetadata(tokenURI)
+        }
+    })
+
+    return (
+        <>
+            {metadata ?
+                <div className="flex justify-between items-center">
+                    <div className="flex gap-4 items-center">
+                        <img src={metadata.image.replace(REPLACE_FROM, REPLACE_TO)} alt={metadata.name} className="w-16 h-16 rounded" />
+                        <h3>{metadata.name}</h3>
+                    </div>
+                    <div>
+                        <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[tokenId]} />
+                    </div>
+                </div>
+                : <></>}
+        </>
+    )
+}

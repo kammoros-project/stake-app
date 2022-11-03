@@ -122,13 +122,27 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
     const { data: ownedNfts } = useOwnedNFTs(nftDropContract, address)
 
     const { data: depositedTokenIdsForAddress } = useContractRead(stakingContract, "depositedTokenIdsForAddress", address)
-    const { data: stakedNfts } = useOwnedNFTs(nftDropContract, stakingContract.getAddress())
+    console.log("stakingContract.getAddress()", stakingContract.getAddress())
+    const { data: stakedNfts, error, status } = useOwnedNFTs(nftDropContract, stakingContract.getAddress())
 
     const [myStakedNFTs, setMyStakedNFTs] = useState<NFT[]>([])
 
     const [loadingNotificationId, setLoadingNotificationId] = useState<number>()
 
     useEffect(() => {
+
+        if (status) {
+            console.log("status", status)
+        }
+
+        if (error) {
+            console.error("error", error)
+        }
+
+        console.log("ownedNfts", ownedNfts)
+        console.log("stakedNfts", stakedNfts)
+        console.log("depositedTokenIdsForAddress", depositedTokenIdsForAddress)
+
         if (stakedNfts && depositedTokenIdsForAddress) {
             const myStakedNFTs = []
             for (let i = 0; i < stakedNfts.length; i++) {
@@ -178,7 +192,7 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
 
         updateNotifications()
 
-    }, [depositedTokenIdsForAddress, stakedNfts, depositStatus, withdrawlStatus, loadingNotificationId, addNotification, removeNotification])
+    }, [status, error, ownedNfts, depositedTokenIdsForAddress, stakedNfts, depositStatus, withdrawlStatus, loadingNotificationId, addNotification, removeNotification])
 
     async function stakeAll() {
         if (!address) return;
