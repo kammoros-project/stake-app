@@ -13,7 +13,7 @@ export default function StakedNFTList({ contractAddress }: IStakedNFTList) {
 
     const address = useAddress()
     const { contract: stakingContract } = useContract(contractAddress, ERC721Staking.abi)
-    const { data: depositedTokenIdsForAddress, status: statusDepositedTokenIdsForAddress } = useContractRead(stakingContract, "depositedTokenIdsForAddress", address)
+    const { data: depositedTokenIdsForAddress, isLoading: isLoadingDepositedTokenIdsForAddress } = useContractRead(stakingContract, "depositedTokenIdsForAddress", address)
     const { data: nftDropAddress, status: statusNFTDropAddress } = useContractRead(stakingContract, "nftCollection")
     const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
     const { data: balanceOf, status: statusBalanceOf } = useContractRead(nftDropContract, "balanceOf", contractAddress)
@@ -29,14 +29,23 @@ export default function StakedNFTList({ contractAddress }: IStakedNFTList) {
 
 
     return (
-        <div className="bg-slate-700 text-slate-50 p-4">
+        <div className="bg-slate-700 text-slate-50 p-4 rounded-lg">
             <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center text-slate-50">
-                    <h3 className="font-semibold">Staked ({depositedTokenIdsForAddress?.length})</h3>
-                    { depositedTokenIdsForAddress && <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[depositedTokenIdsForAddress]} text="Withdraw All" /> }
+                    <div className="font-semibold flex gap-1 items-center">
+                        { isLoadingDepositedTokenIdsForAddress ? 
+                            <div className="bg-slate-200 w-4 h-2 rounded-full animate-pulse" />
+                        :
+                            <div>{depositedTokenIdsForAddress.length}</div>
+                        }
+                        <div>Staked</div>
+                    </div>
+                    { depositedTokenIdsForAddress ? <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[depositedTokenIdsForAddress]} text="Withdraw All" /> : <div className="animate-pulse bg-slate-200 w-24 h-4 rounded-full" />}
                 </div>
             <div>
-                {address && stakedOwnerIndexes && nftDropAddress && depositedTokenIdsForAddress && stakedOwnerIndexes.map((index, key) => <StakedNFTFilter key={key} index={index} contractAddress={contractAddress} nftDropAddress={nftDropAddress} depositedTokenIdsForAddress={depositedTokenIdsForAddress} />)}
+                { statusBalanceOf == "loading" && <div className="text-center animate-pulse">Loading balance</div> }
+                { statusBalanceOf == "error" && <div className="text-center">Opps! Something unexpected happened. Please try again later.</div> }
+                { statusBalanceOf == "success" && address && stakedOwnerIndexes && nftDropAddress && depositedTokenIdsForAddress && stakedOwnerIndexes.map((index, key) => <StakedNFTFilter key={key} index={index} contractAddress={contractAddress} nftDropAddress={nftDropAddress} depositedTokenIdsForAddress={depositedTokenIdsForAddress} />)}
             </div>
             <div className="text-xs text-slate-400 font-mono">{contractAddress}</div>
             </div>

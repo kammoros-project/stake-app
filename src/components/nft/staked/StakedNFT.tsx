@@ -42,14 +42,22 @@ export default function StakedNFT({ contractAddress, nftDropAddress, tokenId }: 
             {metadata ?
                 <div className="flex justify-between items-center">
                     <div className="flex gap-4 items-center">
-                        <img src={metadata.image.replace(REPLACE_FROM, REPLACE_TO)} alt={metadata.name} className="w-16 h-16 rounded" />
+                        <img src={metadata.image.replace(REPLACE_FROM, REPLACE_TO)} alt={metadata.name} className="w-12 h-12 rounded" />
                         <h3>{metadata.name}</h3>
                     </div>
                     <div>
                         <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[tokenId]} />
                     </div>
                 </div>
-                : <></>}
+                : <div className="flex justify-between items-center">
+                <div className="flex gap-4 items-center">
+                    <div className="animate-pulse bg-slate-200 w-12 h-4 rounded-full" />
+                    <div className="animate-pulse bg-slate-200 w-24 h-4 rounded-full" />
+                </div>
+                <div>
+                    <div className="animate-pulse bg-slate-200 w-24 h-4 rounded-full" />
+                </div>
+            </div>}
         </>
     )
 }
