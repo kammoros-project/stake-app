@@ -194,11 +194,7 @@ function NFTStakingTable({ contractAddress }: INFTStakingTable) {
     return (
         <>
             {isLoading ? <div>Loading...</div> : error ? <div>{JSON.stringify(error)}</div> : <>
-                <div className="flex flex-col gap-4">
-                    <div>
-                        <NFTViewerGroup stakingContract={stakingContract} />
-                    </div>
-                    <div className="bg-slate-700 w-full p-4">
+                    <div className="bg-slate-700 w-full p-4 rounded-lg">
                         <table className="table-auto w-full">
                             <thead>
                                 <tr className="hidden lg:table-row">
@@ -220,7 +216,6 @@ function NFTStakingTable({ contractAddress }: INFTStakingTable) {
                             </tbody>
                         </table>
                     </div>
-                </div>
             </>}
         </>
     )

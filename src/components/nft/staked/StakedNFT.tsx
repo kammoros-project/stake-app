@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import NFTWithdrawButton from "../buttons/NFTWithdrawButton"
 
 const REPLACE_FROM = "ipfs://"
-const REPLACE_TO = "https://ipfs.io/ipfs/"
+const REPLACE_TO = "https://cloudflare-ipfs.com/ipfs/"
 
 interface IStakedNFT {
     contractAddress: string

@@ -1,11 +1,9 @@
 import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
-import { BigNumber } from "ethers"
 import { useState, useEffect } from "react"
 import NFTDepositButton from "../buttons/NFTDepositButton"
-// import NFTWithdrawButton from "../withdrawl/NFTWithdrawButton"
 
 const REPLACE_FROM = "ipfs://"
-const REPLACE_TO = "https://ipfs.io/ipfs/"
+const REPLACE_TO = "https://cloudflare-ipfs.com/ipfs/"
 
 interface IOwnedNFT {
     contractAddress: string
