@@ -1,4 +1,5 @@
-import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
+import { useContract, useContractRead } from "@thirdweb-dev/react"
+import { BigNumber } from "ethers"
 import { useState, useEffect } from "react"
 import NFTDepositButton from "../buttons/NFTDepositButton"
 
@@ -8,7 +9,7 @@ const REPLACE_TO = "https://cloudflare-ipfs.com/ipfs/"
 interface IOwnedNFT {
     contractAddress: string
     nftDropAddress: string
-    index: number
+    tokenId: BigNumber
 }
 
 interface IMetadata {
@@ -16,16 +17,13 @@ interface IMetadata {
     image: string
 }
 
-export default function OwnedNFT({ contractAddress, nftDropAddress, index }: IOwnedNFT) {
+export default function OwnedNFT({ contractAddress, nftDropAddress, tokenId }: IOwnedNFT) {
 
-    const address = useAddress()
     const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
-    const { data: tokenId, status: statusTokenId } = useContractRead(nftDropContract, "tokenOfOwnerByIndex", address, index)
-    const { data: tokenURI, status: statusTokenURI } = useContractRead(nftDropContract, "tokenURI", tokenId)
+    const { data: tokenURI } = useContractRead(nftDropContract, "tokenURI", tokenId)
     const [metadata, setMetadata] = useState<IMetadata>()
 
     useEffect(() => {
-
         const fetchMetadata = async (tokenURI: string) => {
             const httpURI = tokenURI.replace(REPLACE_FROM, REPLACE_TO)
             const response = await fetch(httpURI)
@@ -47,7 +45,6 @@ export default function OwnedNFT({ contractAddress, nftDropAddress, index }: IOw
                         <h3>{metadata.name}</h3>
                     </div>
                     <div>
-                        {/* <NFTWithdrawButton contractAddress={contractAddress} tokenIds={[tokenId.toNumber()]} /> */}
                         <NFTDepositButton contractAddress={contractAddress} tokenIds={[tokenId]} />
                     </div>
                 </div>

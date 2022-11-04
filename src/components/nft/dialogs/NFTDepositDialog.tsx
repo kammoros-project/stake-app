@@ -125,7 +125,7 @@ export default function NFTDepositDialog({ tokenIds, contractAddress, isOpen, op
                         </h4>
                     </div>
                 }
-                {!isApproving && !isDepositing &&
+                {!isApproving && !isDepositing && statusDeposit !== "success" &&
                     <button className="w-full text-xl font-semibold text-white py-3 px-4 bg-emerald-500 rounded-md hover:border-emerald-500 hover:bg-emerald-400" onClick={deposit}>
                         <div className="flex items-center justify-center gap-2">
                             <FaArrowAltCircleUp className="h-4" />
