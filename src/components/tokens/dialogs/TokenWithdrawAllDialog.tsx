@@ -4,14 +4,10 @@ import DialogWrapper from '../../dialogs/DialogWrapper'
 import { FaCheckCircle, FaSpinner, FaSync, FaTimes } from "react-icons/fa"
 import { FaArrowAltCircleDown } from "react-icons/fa"
 import { useAddress, useContract, useContractRead, useContractWrite } from '@thirdweb-dev/react'
-import { BigNumber } from 'ethers'
-import { useState, useEffect } from 'react'
 import { tokenStakingAddress } from '../../../contracts'
 import ERC20Staking from "../../../abi/ERC20Staking.json"
 import { TransactionError } from '@thirdweb-dev/sdk'
-import { formatDuration, formatCommify } from '../../../support/formatters'
-
-const tdClass = "text-sm text-right py-1 text-slate-900 border-slate-200"
+import { formatCommify } from '../../../support/formatters'
 
 function LoadingView() {
     return (
