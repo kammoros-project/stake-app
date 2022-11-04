@@ -3,6 +3,7 @@ import { tokenStakingAddress } from "../../contracts"
 import ERC20Staking from "../../abi/ERC20Staking.json"
 import ERC20 from "../../abi/KMCToken.json"
 import { formatCommify } from "../../support/formatters"
+import TokenDepositButton from "./buttons/TokenDepositButton"
 
 export default function OwnedTokens() {
 
@@ -17,7 +18,7 @@ export default function OwnedTokens() {
         <div className="flex flex-col justify-between gap-4 h-full">
             <div className="flex justify-between items-center text-slate-50">
                 <div>Owned</div>
-                {statusBalanceOf === "success" && balanceOf.gt(0) && <div>Token Deposit Button</div>}
+                {statusBalanceOf === "success" && balanceOf.gt(0) && <TokenDepositButton />}
             </div>
             <div>
                 {statusBalanceOf === "loading" && <div className="text-center animate-pulse">Loading balance</div>}

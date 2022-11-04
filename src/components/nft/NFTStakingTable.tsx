@@ -3,10 +3,8 @@ import { format, formatDuration, intervalToDuration } from "date-fns"
 import { BigNumber, ethers } from "ethers"
 import { useEffect, useState } from "react"
 import ERC721Staking from "../../abi/ERC721Staking.json"
-import NFTViewerGroup from "./NFTViewerGroup"
 import _ from "lodash"
 import Spin from "../support/Spin"
-import useNotifications from "../../hooks/useNotifications"
 
 interface INFTStakingTable {
     contractAddress: string
@@ -23,10 +21,9 @@ const headTdClass = "px-3 py-2 text-right text-xs uppercase font-semibold text-s
 function RoundRow({ stakingContract, index }: IRoundRow) {
 
     const address = useAddress()
-    const { addNotification, removeNotification } = useNotifications()
 
     const { data: round } = useContractRead(stakingContract, "rounds", index)
-    const { mutateAsync: claimForRound, isLoading: isClaiming, status: claimStatus } = useContractWrite(stakingContract, "claimForRound")
+    const { mutateAsync: claimForRound, isLoading: isClaiming } = useContractWrite(stakingContract, "claimForRound")
 
     const { data: countDepositsForRound } = useContractRead(stakingContract, "countDepositsForRound", index)
     const { data: countDepositsForRoundByAddress } = useContractRead(stakingContract, "countDepositsForRoundByAddress", index, address)
@@ -39,8 +36,6 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
     const [startTime, setStartTime] = useState<number>()
     const [endTime, setEndTime] = useState<number>()
 
-    const [loadingNotificationId, setLoadingNotificationId] = useState<number>()
-
     useEffect(() => {
         if (round) {
             let startTime = round.startTime as BigNumber
@@ -51,26 +46,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
             setEndTime(endTime.toNumber())
         }
 
-        function updateNotifications() {
-            switch (claimStatus) {
-                case "loading":
-                    setLoadingNotificationId(addNotification({ status: claimStatus, heading: "Processing Transaction", message: `Your rewards are being claimed. Please wait while this transaction is processed.`, autoExpire: false }))
-                    break;
-                case "error":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: claimStatus, heading: "Transaction Error", message: "Oops! Something went wrong! Please try again later.", autoExpire: true })
-                    break;
-                case "success":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: claimStatus, heading: "Transaction Success", message: "Congratulations! Your rewards were successfully claimed.", autoExpire: true })
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        updateNotifications()
-    }, [round, addNotification, removeNotification, claimStatus, loadingNotificationId])
+    }, [round])
 
     function formatNb(bn: BigNumber, dp: number = 2) {
         return (+ethers.utils.formatEther(bn)).toFixed(dp)

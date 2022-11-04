@@ -1,7 +1,6 @@
 import { ThirdwebNftMedia, useAddress, useContract, useContractRead, useContractWrite, useOwnedNFTs } from "@thirdweb-dev/react"
 import { NFT, NFTDrop } from "@thirdweb-dev/sdk"
 import { useEffect, useState } from "react"
-import useNotifications from "../../hooks/useNotifications"
 import Spin from "../support/Spin"
 
 interface INFTViewer {
@@ -14,11 +13,9 @@ interface INFTViewer {
 function NFTViewer({ stakingContract, nftDropContract, nft, staked = false }: INFTViewer) {
 
     const address = useAddress()
-    const { addNotification, removeNotification } = useNotifications()
 
     const { mutateAsync: depositNFT, isLoading: isDepositing, status: depositStatus } = useContractWrite(stakingContract, "depositNFT")
     const { mutateAsync: withdrawNFT, isLoading: isWithdrawing, status: withdrawlStatus } = useContractWrite(stakingContract, "withdrawNFT")
-    const [loadingNotificationId, setLoadingNotificationId] = useState<number>()
 
     async function stakeNft(id: string) {
         if (!address) return;
@@ -40,44 +37,6 @@ function NFTViewer({ stakingContract, nftDropContract, nft, staked = false }: IN
         if (!address) return;
         await withdrawNFT([[id]])
     }
-
-    useEffect(() => {
-
-        function updateNotifications() {
-            switch (depositStatus) {
-                case "loading":
-                    setLoadingNotificationId(addNotification({ status: depositStatus, heading: "Processing Transaction", message: `Your NFT is being deposited. Please wait while this transaction is processed.`, autoExpire: false }))
-                    break;
-                case "error":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: depositStatus, heading: "Transaction Error", message: "Oops! Something went wrong! Please try again later.", autoExpire: true })
-                    break;
-                case "success":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: depositStatus, heading: "Transaction Success", message: "Congratulations! Your NFT was successfully deposited.", autoExpire: true })
-                    break;
-                default:
-                    break;
-            }
-            switch (withdrawlStatus) {
-                case "loading":
-                    setLoadingNotificationId(addNotification({ status: withdrawlStatus, heading: "Processing Transaction", message: `Your NFT is being withdrawn. Please wait while this transaction is processed.`, autoExpire: false }))
-                    break;
-                case "error":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: withdrawlStatus, heading: "Transaction Error", message: "Oops! Something went wrong! Please try again later.", autoExpire: true })
-                    break;
-                case "success":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: withdrawlStatus, heading: "Transaction Success", message: "Congratulations! Your NFT was successfully withdrawn.", autoExpire: true })
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        updateNotifications()
-    }, [depositStatus, withdrawlStatus, addNotification, removeNotification, loadingNotificationId])
 
     return (
         <div className="py-1 flex items-center justify-between">
@@ -112,7 +71,6 @@ interface INFTViewerGroup {
 function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
 
     const address = useAddress()
-    const { addNotification, removeNotification } = useNotifications()
 
     const { mutateAsync: depositNFT, isLoading: isDepositing, status: depositStatus } = useContractWrite(stakingContract, "depositNFT")
     const { mutateAsync: withdrawNFT, isLoading: isWithdrawing, status: withdrawlStatus } = useContractWrite(stakingContract, "withdrawNFT")
@@ -127,21 +85,7 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
 
     const [myStakedNFTs, setMyStakedNFTs] = useState<NFT[]>([])
 
-    const [loadingNotificationId, setLoadingNotificationId] = useState<number>()
-
     useEffect(() => {
-
-        if (status) {
-            console.log("status", status)
-        }
-
-        if (error) {
-            console.error("error", error)
-        }
-
-        console.log("ownedNfts", ownedNfts)
-        console.log("stakedNfts", stakedNfts)
-        console.log("depositedTokenIdsForAddress", depositedTokenIdsForAddress)
 
         if (stakedNfts && depositedTokenIdsForAddress) {
             const myStakedNFTs = []
@@ -157,42 +101,7 @@ function NFTViewerGroup({ stakingContract }: INFTViewerGroup) {
             setMyStakedNFTs(myStakedNFTs)
         }
 
-        function updateNotifications() {
-            switch (depositStatus) {
-                case "loading":
-                    setLoadingNotificationId(addNotification({ status: depositStatus, heading: "Processing Transaction", message: `Your NFT(s) is being deposited. Please wait while this transaction is processed.`, autoExpire: false }))
-                    break;
-                case "error":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: depositStatus, heading: "Transaction Error", message: "Oops! Something went wrong! Please try again later.", autoExpire: true })
-                    break;
-                case "success":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: depositStatus, heading: "Transaction Success", message: "Congratulations! Your NFT(s) was successfully deposited.", autoExpire: true })
-                    break;
-                default:
-                    break;
-            }
-            switch (withdrawlStatus) {
-                case "loading":
-                    setLoadingNotificationId(addNotification({ status: withdrawlStatus, heading: "Processing Transaction", message: `Your NFT(s) is being withdrawn. Please wait while this transaction is processed.`, autoExpire: false }))
-                    break;
-                case "error":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: withdrawlStatus, heading: "Transaction Error", message: "Oops! Something went wrong! Please try again later.", autoExpire: true })
-                    break;
-                case "success":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: withdrawlStatus, heading: "Transaction Success", message: "Congratulations! Your NFT(s) was successfully withdrawn.", autoExpire: true })
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        updateNotifications()
-
-    }, [status, error, ownedNfts, depositedTokenIdsForAddress, stakedNfts, depositStatus, withdrawlStatus, loadingNotificationId, addNotification, removeNotification])
+    }, [status, error, ownedNfts, depositedTokenIdsForAddress, stakedNfts, depositStatus, withdrawlStatus])
 
     async function stakeAll() {
         if (!address) return;

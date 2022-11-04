@@ -3,9 +3,7 @@ import { Tab } from '@headlessui/react'
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Container from "./components/layout/Container";
-import NotificationCenter from "./components/support/NotificationCenter";
-import NotificationProvider from "./providers/NotificationProvider";
-import { useAddress } from "@thirdweb-dev/react";
+import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 import NFTWrapper from "./components/nft/NFTWrapper";
 import TokenWrapper from "./components/tokens/TokenWrapper";
 
@@ -39,12 +37,11 @@ export default function App() {
   const address = useAddress()
 
   return (
-    <NotificationProvider>
-      <div className="min-h-screen flex flex-col justify-between bg-slate-800">
-        <div className="flex flex-col gap-8">
-          <Header />
-          <Container>
-            <NotificationCenter />
+    <div className="min-h-screen flex flex-col justify-between bg-slate-800">
+      <div className="flex flex-col gap-8">
+        <Header />
+        <Container>
+          {address ?
             <Tab.Group>
               <Tab.List className="flex justify-center space-x-1 rounded-xl bg-slate-900/20 p-1 w-full mx-auto mb-16">
                 <AppTab text="KMC Token" />
@@ -56,17 +53,20 @@ export default function App() {
                 <Tab.Panel>
                   <TokenWrapper />
                 </Tab.Panel>
-                {address && nftStakingContracts.map((contract, key) => (
+                {nftStakingContracts.map((contract, key) => (
                   <Tab.Panel key={key} >
                     <NFTWrapper contractAddress={contract.address} />
                   </Tab.Panel>
                 ))}
               </Tab.Panels>
-            </Tab.Group>
-          </Container>
-        </div>
-        <Footer />
+            </Tab.Group> : 
+            <div className="flex flex-col items-center gap-4">
+              <p className="text-slate-50 animate-pulse">Please connect your wallet.</p>
+              <div className="max-w-64"><ConnectWallet accentColor="#f97316" colorMode="light"/></div>
+            </div>}
+        </Container>
       </div>
-    </NotificationProvider>
+      <Footer />
+    </div>
   );
 }
