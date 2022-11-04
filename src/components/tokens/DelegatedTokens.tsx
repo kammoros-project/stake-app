@@ -2,6 +2,7 @@ import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
 import { tokenStakingAddress } from "../../contracts"
 import ERC20Staking from "../../abi/ERC20Staking.json"
 import { formatCommify } from "../../support/formatters"
+import TokenWithdrawAllButton from "./buttons/TokenWithdrawAllButton"
 
 export default function DelegatedTokens() {
 
@@ -14,7 +15,7 @@ export default function DelegatedTokens() {
         <div className="flex flex-col justify-between gap-4 h-full">
             <div className="flex justify-between items-center text-slate-50">
                 <div>Delegated</div>
-                {/* {statusBalanceOf === "success" && balanceOf.gt(0) && <TokenDepositButton />} */}
+                {statusBalanceOf === "success" && balanceOf.gt(0) && <TokenWithdrawAllButton />}
             </div>
             <div>
                 {statusBalanceOf === "loading" && <div className="text-center animate-pulse">Loading balance</div>}
