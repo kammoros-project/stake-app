@@ -5,11 +5,9 @@ import { useEffect, useState } from "react"
 import ERC20Staking from "../../abi/ERC20Staking.json"
 import _ from "lodash"
 import Spin from "../support/Spin"
-import TokenForm from "./TokenForm"
-
-interface ITokenStakingTable {
-    contractAddress: string
-}
+import { tokenStakingAddress } from "../../contracts"
+import { formatCommify, formatCountdown, formatSimplePercent } from "../../support/formatters"
+import moment from "moment"
 
 interface IRoundRow {
     stakingContract: any
@@ -81,19 +79,19 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
         <>
             <tr className="hidden lg:table-row">
                 <td className={tdClass}>{index}</td>
-                <td className={tdClass} colSpan={2}>{startTime ? <>{(new Date(startTime)).toUTCString()}</> : <></>}</td>
-                <td className={tdClass} colSpan={2}>{endTime ? <>{(new Date(endTime)).toUTCString()}</> : <></>}</td>
-                <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
+                <td className={tdClass} colSpan={2}>{startTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</td>
+                <td className={tdClass} colSpan={2}>{endTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</td>
+                <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatCountdown(round)}</> : <>Loading</>}</td>
                 <td className={tdClass}>
-                    <span>{amountStakedForRoundByAddress ? <>{formatNb(amountStakedForRoundByAddress, 0)}</> : <>-</>}</span>
+                    <span>{amountStakedForRoundByAddress ? <>{formatCommify(amountStakedForRoundByAddress, 0)}</> : <>-</>}</span>
                     <span>/</span>
-                    <span>{amountStakedForRound ? <>{formatNb(amountStakedForRound, 0)}</> : <>-</>}</span>
+                    <span>{amountStakedForRound ? <>{formatCommify(amountStakedForRound, 0)}</> : <>-</>}</span>
                 </td>
-                <td className={tdClass}>{weightedAverageForRoundByAddress ? <>{formatNb(weightedAverageForRoundByAddress.mul(100))}%</> : <>-</>}</td>
-                <td className={tdClass}>{round ? <>{formatNb(round.amountAllocated)}</> : <>-</>}</td>
-                <td className={tdClass}>{ethAllocForRoundByAddress ? <>{formatNb(ethAllocForRoundByAddress)}</> : <>-</>}</td>
-                <td className={tdClass}>{ethClaimedForRoundByAddress ? <>{formatNb(ethClaimedForRoundByAddress)}</> : <>-</>}</td>
-                <td className={tdClass}>{ethUnclaimedForRoundByAddress ? <>{formatNb(ethUnclaimedForRoundByAddress)}</> : <>-</>}</td>
+                <td className={tdClass}>{weightedAverageForRoundByAddress ? <>{formatSimplePercent(weightedAverageForRoundByAddress)}</> : <>-</>}</td>
+                <td className={tdClass}>{round ? <>{formatCommify(round.amountAllocated)}</> : <>-</>}</td>
+                <td className={tdClass}>{ethAllocForRoundByAddress ? <>{formatCommify(ethAllocForRoundByAddress)}</> : <>-</>}</td>
+                <td className={tdClass}>{ethClaimedForRoundByAddress ? <>{formatCommify(ethClaimedForRoundByAddress)}</> : <>-</>}</td>
+                <td className={tdClass}>{ethUnclaimedForRoundByAddress ? <>{formatCommify(ethUnclaimedForRoundByAddress)}</> : <>-</>}</td>
                 <td className={`${tdClass} pr-0`} colSpan={2}>
                     <button className="px-2 py-1 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-500 disabled:bg-slate-500/20  disabled:text-slate-500" onClick={() => claimRound()} disabled={claimDisabled()}>
                         <div className="flex justify-between items-center gap-2">
@@ -166,82 +164,34 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
     )
 }
 
-interface ITokenInput {
-    stakingContract: any
-}
-
-function TokenInput({ stakingContract }: ITokenInput) {
-
-    return (
-        <div>
-            <div>
-                <TokenForm stakingContract={stakingContract} />
-            </div>
-        </div>
-    )
-
-}
-
-function TokenStakingTable({ contractAddress }: ITokenStakingTable) {
-    const address = useAddress()
-    const { contract: stakingContract, isLoading, error } = useContract(contractAddress, ERC20Staking.abi)
-    const { data: balanceOf } = useContractRead(stakingContract, "balanceOf", address)
-    const { mutateAsync: withdrawToken } = useContractWrite(stakingContract, "withdrawToken")
-
+function TokenStakingTable() {
+    const { contract: stakingContract, isLoading, error } = useContract(tokenStakingAddress, ERC20Staking.abi)
     const { data: nbRounds } = useContractRead(stakingContract, "nbRounds")
-
-    const [withdrawing, setWithdrawing] = useState<boolean>(false)
-
-    async function withdraw() {
-        setWithdrawing(true)
-        await withdrawToken([])
-        setWithdrawing(false)
-    }
 
     return (
         <>
             {isLoading ? <div>Loading...</div> : error ? <div>{JSON.stringify(error)}</div> : <>
-                <div className="flex flex-col gap-4">
-                    <div className="grid lg:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-4 bg-slate-700 p-4">
-                            <h3 className="font-semibold text-slate-50">Owned</h3>
-                            <TokenInput stakingContract={stakingContract} />
-                        </div>
-                        <div className="flex justify-between bg-slate-700 p-4 text-slate-50">
-                            <h3 className="font-semibold text-slate-50">Staked: {balanceOf ? <>{ethers.utils.formatEther(balanceOf)}</> : <>-</>}</h3>
-                            {balanceOf && (balanceOf as BigNumber).gt(0) ?
-                                <div>
-                                    <button className="text-xs uppercase border border-orange-400 text-orange-400 rounded p-2 hover:bg-orange-400 hover:text-orange-800" onClick={() => withdraw()}>
-                                        <div className="flex justify-between items-center gap-2">
-                                            {withdrawing ? <Spin /> : <></>}
-                                            <span>Withdraw Tokens</span>
-                                        </div>
-                                    </button>
-                                </div> : <div>Buy $KMC on <a className="text-blue-300 hover:underline" href="https://pancakeswap.finance/swap?outputCurrency=0x0974e5F2772a998301D7D6e9aca3F74d80Eef709">PancakeSwap</a>.</div>}
-                        </div>
-                    </div>
-                    <div className="bg-slate-700 w-full p-4">
-                        <table className="table-auto w-full">
-                            <thead>
-                                <tr className="hidden lg:table-row">
-                                    <td className={headTdClass}>#</td>
-                                    <td className={headTdClass} colSpan={2}>Start Time</td>
-                                    <td className={headTdClass} colSpan={2}>End Time</td>
-                                    <td className={headTdClass} colSpan={2}>Duration</td>
-                                    <td className={headTdClass}>Stake</td>
-                                    <td className={headTdClass}>%</td>
-                                    <td className={headTdClass}>Round*</td>
-                                    <td className={headTdClass}>Yours*</td>
-                                    <td className={headTdClass}>Claimed*</td>
-                                    <td className={headTdClass}>Unclaimed*</td>
-                                    <td className={`${headTdClass} pr-0`} colSpan={2}>*BNB</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {nbRounds ? _.times(nbRounds, (index) => <RoundRow key={index} stakingContract={stakingContract} index={index} />) : <></>}
-                            </tbody>
-                        </table>
-                    </div>
+                <div className="bg-slate-700 w-full p-4">
+                    <table className="table-auto w-full">
+                        <thead>
+                            <tr className="hidden lg:table-row">
+                                <td className={headTdClass}>#</td>
+                                <td className={headTdClass} colSpan={2}>Start Time</td>
+                                <td className={headTdClass} colSpan={2}>End Time</td>
+                                <td className={headTdClass} colSpan={2}>Duration</td>
+                                <td className={headTdClass}>Stake</td>
+                                <td className={headTdClass}>%</td>
+                                <td className={headTdClass}>Round*</td>
+                                <td className={headTdClass}>Yours*</td>
+                                <td className={headTdClass}>Claimed*</td>
+                                <td className={headTdClass}>Unclaimed*</td>
+                                <td className={`${headTdClass} pr-0`} colSpan={2}>*BNB</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {nbRounds ? _.times(nbRounds, (index) => <RoundRow key={index} stakingContract={stakingContract} index={index} />) : <></>}
+                        </tbody>
+                    </table>
                 </div>
             </>}
         </>

@@ -1,12 +1,11 @@
 import { useAddress, useContract, useContractRead, useContractWrite } from "@thirdweb-dev/react"
-import { format, formatDuration, intervalToDuration } from "date-fns"
 import { BigNumber, ethers } from "ethers"
 import { useEffect, useState } from "react"
 import ERC721Staking from "../../abi/ERC721Staking.json"
-import NFTViewerGroup from "./NFTViewerGroup"
 import _ from "lodash"
 import Spin from "../support/Spin"
-import useNotifications from "../../hooks/useNotifications"
+import { formatCommify, formatCountdown, formatSimplePercent } from "../../support/formatters"
+import moment from "moment"
 
 interface INFTStakingTable {
     contractAddress: string
@@ -23,10 +22,9 @@ const headTdClass = "px-3 py-2 text-right text-xs uppercase font-semibold text-s
 function RoundRow({ stakingContract, index }: IRoundRow) {
 
     const address = useAddress()
-    const { addNotification, removeNotification } = useNotifications()
 
     const { data: round } = useContractRead(stakingContract, "rounds", index)
-    const { mutateAsync: claimForRound, isLoading: isClaiming, status: claimStatus } = useContractWrite(stakingContract, "claimForRound")
+    const { mutateAsync: claimForRound, isLoading: isClaiming } = useContractWrite(stakingContract, "claimForRound")
 
     const { data: countDepositsForRound } = useContractRead(stakingContract, "countDepositsForRound", index)
     const { data: countDepositsForRoundByAddress } = useContractRead(stakingContract, "countDepositsForRoundByAddress", index, address)
@@ -39,8 +37,6 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
     const [startTime, setStartTime] = useState<number>()
     const [endTime, setEndTime] = useState<number>()
 
-    const [loadingNotificationId, setLoadingNotificationId] = useState<number>()
-
     useEffect(() => {
         if (round) {
             let startTime = round.startTime as BigNumber
@@ -51,26 +47,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
             setEndTime(endTime.toNumber())
         }
 
-        function updateNotifications() {
-            switch (claimStatus) {
-                case "loading":
-                    setLoadingNotificationId(addNotification({ status: claimStatus, heading: "Processing Transaction", message: `Your rewards are being claimed. Please wait while this transaction is processed.`, autoExpire: false }))
-                    break;
-                case "error":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: claimStatus, heading: "Transaction Error", message: "Oops! Something went wrong! Please try again later.", autoExpire: true })
-                    break;
-                case "success":
-                    if (loadingNotificationId !== undefined) removeNotification(loadingNotificationId)
-                    addNotification({ status: claimStatus, heading: "Transaction Success", message: "Congratulations! Your rewards were successfully claimed.", autoExpire: true })
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        updateNotifications()
-    }, [round, addNotification, removeNotification, claimStatus, loadingNotificationId])
+    }, [round])
 
     function formatNb(bn: BigNumber, dp: number = 2) {
         return (+ethers.utils.formatEther(bn)).toFixed(dp)
@@ -101,9 +78,9 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
         <>
             <tr className="hidden lg:table-row">
                 <td className={tdClass}>{index}</td>
-                <td className={tdClass} colSpan={2}>{startTime ? <>{format(startTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
-                <td className={tdClass} colSpan={2}>{endTime ? <>{format(endTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
-                <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
+                <td className={tdClass} colSpan={2}>{startTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</td>
+                <td className={tdClass} colSpan={2}>{endTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</td>
+                <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatCountdown(round)}</> : <>Loading</>}</td>
                 <td className={tdClass}>
                     <span>{countDepositsForRoundByAddress ? <>{countDepositsForRoundByAddress.toString()}</> : <>-</>}</span>
                     <span>/</span>
@@ -131,15 +108,15 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Start Time</span>
-                        <span>{startTime ? <>{format(startTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</span>
+                        <span>{startTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>End Time</span>
-                        <span>{endTime ? <>{format(endTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</span>
+                        <span>{endTime ? <>{moment(round.endTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Duration</span>
-                        <span>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</span>
+                        <span>{startTime && endTime ? <>{formatCountdown(round)}</> : <>Loading</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Stake</span>
@@ -151,7 +128,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Percentage</span>
-                        <span>{weightedAverageForRoundByAddress ? <>{formatNb(weightedAverageForRoundByAddress.mul(100))}%</> : <>-</>}</span>
+                        <span>{weightedAverageForRoundByAddress ? <>{formatSimplePercent(weightedAverageForRoundByAddress)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Round*</span>
@@ -159,15 +136,15 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Yours*</span>
-                        <span>{ethAllocForRoundByAddress ? <>{formatNb(ethAllocForRoundByAddress)}</> : <>-</>}</span>
+                        <span>{ethAllocForRoundByAddress ? <>{formatCommify(ethAllocForRoundByAddress)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Claimed*</span>
-                        <span>{ethClaimedForRoundByAddress ? <>{formatNb(ethClaimedForRoundByAddress)}</> : <>-</>}</span>
+                        <span>{ethClaimedForRoundByAddress ? <>{formatCommify(ethClaimedForRoundByAddress)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Unclaimed*</span>
-                        <span>{ethUnclaimedForRoundByAddress ? <>{formatNb(ethUnclaimedForRoundByAddress)}</> : <>-</>}</span>
+                        <span>{ethUnclaimedForRoundByAddress ? <>{formatCommify(ethUnclaimedForRoundByAddress)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <button className="w-full px-auto py-2 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-500 disabled:bg-slate-500/20  disabled:text-slate-500" onClick={() => claimRound()} disabled={claimDisabled()}>
@@ -194,11 +171,7 @@ function NFTStakingTable({ contractAddress }: INFTStakingTable) {
     return (
         <>
             {isLoading ? <div>Loading...</div> : error ? <div>{JSON.stringify(error)}</div> : <>
-                <div className="flex flex-col gap-4">
-                    <div>
-                        <NFTViewerGroup stakingContract={stakingContract} />
-                    </div>
-                    <div className="bg-slate-700 w-full p-4">
+                    <div className="bg-slate-700 w-full p-4 rounded-lg">
                         <table className="table-auto w-full">
                             <thead>
                                 <tr className="hidden lg:table-row">
@@ -220,7 +193,6 @@ function NFTStakingTable({ contractAddress }: INFTStakingTable) {
                             </tbody>
                         </table>
                     </div>
-                </div>
             </>}
         </>
     )
