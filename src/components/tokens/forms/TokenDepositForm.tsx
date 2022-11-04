@@ -40,12 +40,8 @@ export default function TokenDepositForm() {
         setAmount(amount)
 
         if ((allowance as BigNumber).lt(balanceOf)) {
-            console.log(`Approving ${formatCommify(amount)}.`)
             await approve([tokenStakingAddress, ethers.constants.MaxUint256])
         }
-        // await approve([tokenStakingAddress, amount])
-
-        console.log(`Depositing ${formatCommify(amount)}.`)
         await depositToken([amount])
     };
 
