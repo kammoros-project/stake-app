@@ -1,10 +1,11 @@
 import { useAddress, useContract, useContractRead, useContractWrite } from "@thirdweb-dev/react"
-import { format, formatDuration, intervalToDuration } from "date-fns"
 import { BigNumber, ethers } from "ethers"
 import { useEffect, useState } from "react"
 import ERC721Staking from "../../abi/ERC721Staking.json"
 import _ from "lodash"
 import Spin from "../support/Spin"
+import { formatCommify, formatCountdown, formatSimplePercent } from "../../support/formatters"
+import moment from "moment"
 
 interface INFTStakingTable {
     contractAddress: string
@@ -77,9 +78,9 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
         <>
             <tr className="hidden lg:table-row">
                 <td className={tdClass}>{index}</td>
-                <td className={tdClass} colSpan={2}>{startTime ? <>{format(startTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
-                <td className={tdClass} colSpan={2}>{endTime ? <>{format(endTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</td>
-                <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
+                <td className={tdClass} colSpan={2}>{startTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</td>
+                <td className={tdClass} colSpan={2}>{endTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</td>
+                <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatCountdown(round)}</> : <>Loading</>}</td>
                 <td className={tdClass}>
                     <span>{countDepositsForRoundByAddress ? <>{countDepositsForRoundByAddress.toString()}</> : <>-</>}</span>
                     <span>/</span>
@@ -107,15 +108,15 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Start Time</span>
-                        <span>{startTime ? <>{format(startTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</span>
+                        <span>{startTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>End Time</span>
-                        <span>{endTime ? <>{format(endTime, "dd/MM/yyyy HH:mm:ss")}</> : <></>}</span>
+                        <span>{endTime ? <>{moment(round.endTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Duration</span>
-                        <span>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</span>
+                        <span>{startTime && endTime ? <>{formatCountdown(round)}</> : <>Loading</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Stake</span>
@@ -127,7 +128,7 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Percentage</span>
-                        <span>{weightedAverageForRoundByAddress ? <>{formatNb(weightedAverageForRoundByAddress.mul(100))}%</> : <>-</>}</span>
+                        <span>{weightedAverageForRoundByAddress ? <>{formatSimplePercent(weightedAverageForRoundByAddress)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Round*</span>
@@ -135,15 +136,15 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Yours*</span>
-                        <span>{ethAllocForRoundByAddress ? <>{formatNb(ethAllocForRoundByAddress)}</> : <>-</>}</span>
+                        <span>{ethAllocForRoundByAddress ? <>{formatCommify(ethAllocForRoundByAddress)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Claimed*</span>
-                        <span>{ethClaimedForRoundByAddress ? <>{formatNb(ethClaimedForRoundByAddress)}</> : <>-</>}</span>
+                        <span>{ethClaimedForRoundByAddress ? <>{formatCommify(ethClaimedForRoundByAddress)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Unclaimed*</span>
-                        <span>{ethUnclaimedForRoundByAddress ? <>{formatNb(ethUnclaimedForRoundByAddress)}</> : <>-</>}</span>
+                        <span>{ethUnclaimedForRoundByAddress ? <>{formatCommify(ethUnclaimedForRoundByAddress)}</> : <>-</>}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <button className="w-full px-auto py-2 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-500 disabled:bg-slate-500/20  disabled:text-slate-500" onClick={() => claimRound()} disabled={claimDisabled()}>

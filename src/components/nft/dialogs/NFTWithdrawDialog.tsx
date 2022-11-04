@@ -3,13 +3,10 @@ import { INFTWithdrawDialog } from '../../../types/dialogs'
 import DialogWrapper from '../../dialogs/DialogWrapper'
 import { FaCheckCircle, FaSpinner, FaSync, FaTimes } from "react-icons/fa"
 import { FaArrowAltCircleDown } from "react-icons/fa"
-import { useContract, useContractRead, useContractWrite } from '@thirdweb-dev/react'
+import { useContract, useContractWrite } from '@thirdweb-dev/react'
 import ERC721Staking from "../../../abi/ERC721Staking.json"
-import { useState } from 'react'
 import { BigNumber } from 'ethers'
 import { TransactionError } from '@thirdweb-dev/sdk'
-
-const tdClass = "text-sm text-right py-1 text-slate-900 border-slate-200"
 
 interface IStatusView {
     tokenIds: BigNumber[]
@@ -98,7 +95,7 @@ export default function NFTWithdrawDialog({ contractAddress, tokenIds, isOpen, o
                         >
                             <div className="flex items-center justify-center gap-2">
                                 <FaArrowAltCircleDown className="h-4" />
-                                { tokenIds.length == 1 ? <span>Withdraw NFT</span> : <span>Withdraw {tokenIds.length} NFTs</span>}
+                                { tokenIds.length === 1 ? <span>Withdraw NFT</span> : <span>Withdraw {tokenIds.length} NFTs</span>}
                             </div>
                         </button>
                     </>}

@@ -13,14 +13,14 @@ interface IStakedNFTFilter {
 export default function StakedNFTFilter({ contractAddress, nftDropAddress, index, depositedTokenIdsForAddress }: IStakedNFTFilter) {
 
     const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
-    const { data: tokenId, isLoading: isLoadingTokenId } = useContractRead(nftDropContract, "tokenOfOwnerByIndex", contractAddress, index)
+    const { data: tokenId } = useContractRead(nftDropContract, "tokenOfOwnerByIndex", contractAddress, index)
 
     const [isDelegated, setIsDelegated] = useState(false)
 
     useEffect(() => {
         if (tokenId) {
             const result = depositedTokenIdsForAddress.findIndex((value) => value.eq(tokenId))
-            if (result != -1) {
+            if (result !== -1) {
                 setIsDelegated(true)
             }
         }

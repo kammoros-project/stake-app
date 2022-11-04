@@ -7,6 +7,7 @@ import _ from "lodash"
 import Spin from "../support/Spin"
 import { tokenStakingAddress } from "../../contracts"
 import { formatCommify, formatCountdown, formatSimplePercent } from "../../support/formatters"
+import moment from "moment"
 
 interface IRoundRow {
     stakingContract: any
@@ -78,13 +79,13 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
         <>
             <tr className="hidden lg:table-row">
                 <td className={tdClass}>{index}</td>
-                <td className={tdClass} colSpan={2}>{startTime ? <>{(new Date(startTime)).toUTCString()}</> : <></>}</td>
-                <td className={tdClass} colSpan={2}>{endTime ? <>{(new Date(endTime)).toUTCString()}</> : <></>}</td>
+                <td className={tdClass} colSpan={2}>{startTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</td>
+                <td className={tdClass} colSpan={2}>{endTime ? <>{moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm")}</> : <></>}</td>
                 <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatCountdown(round)}</> : <>Loading</>}</td>
                 <td className={tdClass}>
-                    <span>{amountStakedForRoundByAddress ? <>{formatCommify(amountStakedForRoundByAddress)}</> : <>-</>}</span>
+                    <span>{amountStakedForRoundByAddress ? <>{formatCommify(amountStakedForRoundByAddress, 0)}</> : <>-</>}</span>
                     <span>/</span>
-                    <span>{amountStakedForRound ? <>{formatCommify(amountStakedForRound)}</> : <>-</>}</span>
+                    <span>{amountStakedForRound ? <>{formatCommify(amountStakedForRound, 0)}</> : <>-</>}</span>
                 </td>
                 <td className={tdClass}>{weightedAverageForRoundByAddress ? <>{formatSimplePercent(weightedAverageForRoundByAddress)}</> : <>-</>}</td>
                 <td className={tdClass}>{round ? <>{formatCommify(round.amountAllocated)}</> : <>-</>}</td>

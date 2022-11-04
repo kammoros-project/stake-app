@@ -40,11 +40,11 @@ export function formatCountdown(round: any): string {
     return humanizeDuration(duration, options)
 }
 
-export function formatCommify(nb: any): string {
+export function formatCommify(nb: any, decimals: number = 4): string {
     if (!(nb instanceof BigNumber)) return ""
     nb = ethers.utils.formatEther(nb)
     const str = ethers.utils.commify(nb)
-    const index = str.indexOf(".") + 4
+    const index = str.indexOf(".") + decimals
     return str.substring(0, index)
     // return str
 }

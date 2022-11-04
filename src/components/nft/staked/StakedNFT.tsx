@@ -20,7 +20,7 @@ interface IMetadata {
 export default function StakedNFT({ contractAddress, nftDropAddress, tokenId }: IStakedNFT) {
 
     const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
-    const { data: tokenURI, status } = useContractRead(nftDropContract, "tokenURI", tokenId)
+    const { data: tokenURI } = useContractRead(nftDropContract, "tokenURI", tokenId)
     const [metadata, setMetadata] = useState<IMetadata>()
 
     useEffect(() => {
