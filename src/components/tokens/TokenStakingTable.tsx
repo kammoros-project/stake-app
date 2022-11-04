@@ -6,6 +6,7 @@ import ERC20Staking from "../../abi/ERC20Staking.json"
 import _ from "lodash"
 import Spin from "../support/Spin"
 import { tokenStakingAddress } from "../../contracts"
+import { formatCommify, formatCountdown, formatSimplePercent } from "../../support/formatters"
 
 interface IRoundRow {
     stakingContract: any
@@ -79,17 +80,17 @@ function RoundRow({ stakingContract, index }: IRoundRow) {
                 <td className={tdClass}>{index}</td>
                 <td className={tdClass} colSpan={2}>{startTime ? <>{(new Date(startTime)).toUTCString()}</> : <></>}</td>
                 <td className={tdClass} colSpan={2}>{endTime ? <>{(new Date(endTime)).toUTCString()}</> : <></>}</td>
-                <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatDuration(intervalToDuration({ start: new Date(startTime), end: new Date(endTime) }))}</> : <>Loading</>}</td>
+                <td className={tdClass} colSpan={2}>{startTime && endTime ? <>{formatCountdown(round)}</> : <>Loading</>}</td>
                 <td className={tdClass}>
-                    <span>{amountStakedForRoundByAddress ? <>{formatNb(amountStakedForRoundByAddress, 0)}</> : <>-</>}</span>
+                    <span>{amountStakedForRoundByAddress ? <>{formatCommify(amountStakedForRoundByAddress)}</> : <>-</>}</span>
                     <span>/</span>
-                    <span>{amountStakedForRound ? <>{formatNb(amountStakedForRound, 0)}</> : <>-</>}</span>
+                    <span>{amountStakedForRound ? <>{formatCommify(amountStakedForRound)}</> : <>-</>}</span>
                 </td>
-                <td className={tdClass}>{weightedAverageForRoundByAddress ? <>{formatNb(weightedAverageForRoundByAddress.mul(100))}%</> : <>-</>}</td>
-                <td className={tdClass}>{round ? <>{formatNb(round.amountAllocated)}</> : <>-</>}</td>
-                <td className={tdClass}>{ethAllocForRoundByAddress ? <>{formatNb(ethAllocForRoundByAddress)}</> : <>-</>}</td>
-                <td className={tdClass}>{ethClaimedForRoundByAddress ? <>{formatNb(ethClaimedForRoundByAddress)}</> : <>-</>}</td>
-                <td className={tdClass}>{ethUnclaimedForRoundByAddress ? <>{formatNb(ethUnclaimedForRoundByAddress)}</> : <>-</>}</td>
+                <td className={tdClass}>{weightedAverageForRoundByAddress ? <>{formatSimplePercent(weightedAverageForRoundByAddress)}</> : <>-</>}</td>
+                <td className={tdClass}>{round ? <>{formatCommify(round.amountAllocated)}</> : <>-</>}</td>
+                <td className={tdClass}>{ethAllocForRoundByAddress ? <>{formatCommify(ethAllocForRoundByAddress)}</> : <>-</>}</td>
+                <td className={tdClass}>{ethClaimedForRoundByAddress ? <>{formatCommify(ethClaimedForRoundByAddress)}</> : <>-</>}</td>
+                <td className={tdClass}>{ethUnclaimedForRoundByAddress ? <>{formatCommify(ethUnclaimedForRoundByAddress)}</> : <>-</>}</td>
                 <td className={`${tdClass} pr-0`} colSpan={2}>
                     <button className="px-2 py-1 uppercase rounded border border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-emerald-800 disabled:border-slate-500 disabled:bg-slate-500/20  disabled:text-slate-500" onClick={() => claimRound()} disabled={claimDisabled()}>
                         <div className="flex justify-between items-center gap-2">
