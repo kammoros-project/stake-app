@@ -82,7 +82,7 @@ export default function NFTDepositDialog({ tokenIds, contractAddress, isOpen, op
 
     const address = useAddress()
     const { contract: stakingContract } = useContract(contractAddress, ERC721Staking.abi)
-    const { data: nftDropAddress, status: statusNFTDropAddress } = useContractRead(stakingContract, "nftCollection")
+    const { data: nftDropAddress } = useContractRead(stakingContract, "nftCollection")
     const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
     const { mutateAsync: approve, isLoading: isApproving, status: statusApproval, error: errorApproval } = useContractWrite(nftDropContract, "setApprovalForAll");
     const { mutateAsync: depositNFT, isLoading: isDepositing, status: statusDeposit, error: errorDeposit } = useContractWrite(stakingContract, "depositNFT")
@@ -111,13 +111,13 @@ export default function NFTDepositDialog({ tokenIds, contractAddress, isOpen, op
                 </div>
             </Dialog.Title>
             <div className="mt-8">
-                {statusApproval == "error" && <ApprovalError error={errorApproval as TransactionError} />}
-                {statusApproval == "loading" && <ApprovalLoading />}
-                {statusDeposit == "error" && <DepositError error={errorDeposit as TransactionError} />}
-                {statusDeposit == "loading" && <DepositLoading tokenIds={tokenIds} />}
-                {statusDeposit == "success" && <DepositSuccess tokenIds={tokenIds} />}
+                {statusApproval === "error" && <ApprovalError error={errorApproval as TransactionError} />}
+                {statusApproval === "loading" && <ApprovalLoading />}
+                {statusDeposit === "error" && <DepositError error={errorDeposit as TransactionError} />}
+                {statusDeposit === "loading" && <DepositLoading tokenIds={tokenIds} />}
+                {statusDeposit === "success" && <DepositSuccess tokenIds={tokenIds} />}
 
-                {(statusApproval == "idle" && statusDeposit == "idle") &&
+                {(statusApproval === "idle" && statusDeposit === "idle") &&
                     <div className='text-center my-4'>
                         <h3 className="font-semibold uppercase text-emerld-900">Deposit NFT(s)</h3>
                         <h4 className="font-semibold uppercase text-slate-400">

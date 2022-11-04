@@ -1,5 +1,5 @@
-import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
-import { BigNumber, ethers } from "ethers"
+import { useAddress } from "@thirdweb-dev/react"
+import { BigNumber } from "ethers"
 import { useState } from "react"
 import { FaArrowAltCircleDown } from "react-icons/fa"
 import NFTWithdrawDialog from "../dialogs/NFTWithdrawDialog"
