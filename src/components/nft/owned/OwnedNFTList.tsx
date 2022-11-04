@@ -45,7 +45,10 @@ export default function OwnedNFTList({ contractAddress }: IStakedNFTList) {
                         }
                         <div>Owned</div>
                     </div>
-                    {statusBalanceOf === "success" && tokenIds && tokenIds?.length > 0 && balanceOf.gt(0) && <NFTDepositButton contractAddress={contractAddress} tokenIds={tokenIds} text="Deposit All" />}
+                    <div className="flex gap-2">
+                        <a href="https://mint.kammorostoken.com" target={"_blank"} className="px-2 py-1 text-sm font-semibold uppercase rounded border-2 border-slate-500 text-slate-500 hover:border-slate-400 hover:text-slate-400">Mint</a>
+                        {statusBalanceOf === "success" && tokenIds && tokenIds?.length > 0 && balanceOf.gt(0) && <NFTDepositButton contractAddress={contractAddress} tokenIds={tokenIds} text="Deposit All" />}
+                    </div>
                 </div>
                 <div>
                     {statusBalanceOf === "loading" && <div className="text-center animate-pulse">Loading balance</div>}
