@@ -6,4 +6,4 @@ export const nftStakingContracts = [
     { name: "Whiteleg Staking", address: "0x63330C8A02E1cD0f2a8dAc98fEb2d7e380e2fa42", nft: true },
 ]
 
-export const tokenStakingContract = "0x1875C1D0cC2727Ec1A74f90dB591A80d155B0845"
+export const tokenStakingAddress = "0x1875C1D0cC2727Ec1A74f90dB591A80d155B0845"

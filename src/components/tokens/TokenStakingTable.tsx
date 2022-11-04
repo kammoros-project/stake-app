@@ -6,7 +6,7 @@ import ERC20Staking from "../../abi/ERC20Staking.json"
 import _ from "lodash"
 import Spin from "../support/Spin"
 import TokenForm from "./TokenForm"
-import { tokenStakingContract } from "../../contracts"
+import { tokenStakingAddress } from "../../contracts"
 
 interface IRoundRow {
     stakingContract: any
@@ -181,7 +181,7 @@ function TokenInput({ stakingContract }: ITokenInput) {
 
 function TokenStakingTable() {
     const address = useAddress()
-    const { contract: stakingContract, isLoading, error } = useContract(tokenStakingContract, ERC20Staking.abi)
+    const { contract: stakingContract, isLoading, error } = useContract(tokenStakingAddress, ERC20Staking.abi)
     const { data: balanceOf } = useContractRead(stakingContract, "balanceOf", address)
     const { mutateAsync: withdrawToken } = useContractWrite(stakingContract, "withdrawToken")
 

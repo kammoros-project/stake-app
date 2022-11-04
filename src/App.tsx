@@ -7,7 +7,7 @@ import NotificationCenter from "./components/support/NotificationCenter";
 import NotificationProvider from "./providers/NotificationProvider";
 import { useAddress } from "@thirdweb-dev/react";
 import NFTWrapper from "./components/nft/NFTWrapper";
-import TokenStakingTable from "./components/Token/TokenStakingTable";
+import TokenWrapper from "./components/tokens/TokenWrapper";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -54,7 +54,7 @@ export default function App() {
               </Tab.List>
               <Tab.Panels className="mt-2">
                 <Tab.Panel>
-                  <TokenStakingTable />
+                  <TokenWrapper />
                 </Tab.Panel>
                 {address && nftStakingContracts.map((contract, key) => (
                   <Tab.Panel key={key} >
