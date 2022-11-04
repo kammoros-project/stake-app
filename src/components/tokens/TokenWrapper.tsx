@@ -1,5 +1,6 @@
 import DelegatedTokens from "./DelegatedTokens";
 import OwnedTokens from "./OwnedTokens";
+import TokenStakingTable from "./TokenStakingTable";
 
 export default function TokenWrapper() {
 
@@ -10,7 +11,7 @@ export default function TokenWrapper() {
                 <DelegatedTokens />
             </div>
             <div>
-                {/* <NFTStakingTable contractAddress={tokenStakingContract} /> */}
+                <TokenStakingTable />
             </div>
         </div>
     )
