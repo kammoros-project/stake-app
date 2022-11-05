@@ -51,9 +51,9 @@ export default function TokenDepositForm() {
         // const gasCostOfDeposit = await (tokenStakingContract as SmartContract).estimator.gasCostOf("depositToken", [amount]);
         // console.log("gasCostOfDeposit", gasCostOfDeposit)
 
-        (tokenStakingContract as SmartContract).interceptor.overrideNextTransaction(() => ({
-            gasLimit: 300000,
-        }));
+        // (tokenStakingContract as SmartContract).interceptor.overrideNextTransaction(() => ({
+        //     gasLimit: 300000,
+        // }));
 
         await depositToken([amount])
     };
