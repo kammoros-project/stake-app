@@ -9,7 +9,7 @@ function Header() {
                 <div className="flex justify-between items-center gap-4">
                     <div className="flex flex-row items-center">
                         <img src={logo} alt="Kammoros logo" className="w-16"/>
-                        <span className="uppercase hidden sm:block text-sm md:text-xl font-semibold">Kammoros NFT Mint</span>
+                        <span className="uppercase hidden sm:block text-sm md:text-xl font-semibold">Kammoros Staking</span>
                     </div>
                     <div>
                         <ConnectWallet accentColor="#f97316" colorMode="light"/>
