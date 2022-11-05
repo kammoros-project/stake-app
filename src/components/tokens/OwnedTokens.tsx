@@ -1,5 +1,5 @@
 import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
-import { tokenStakingAddress } from "../../contracts"
+import { tokenStakingAddress } from "../../constants"
 import ERC20Staking from "../../abi/ERC20Staking.json"
 import ERC20 from "../../abi/KMCToken.json"
 import { formatCommify } from "../../support/formatters"

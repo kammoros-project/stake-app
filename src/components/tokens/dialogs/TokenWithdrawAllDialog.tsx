@@ -4,7 +4,7 @@ import DialogWrapper from '../../dialogs/DialogWrapper'
 import { FaCheckCircle, FaSpinner, FaSync, FaTimes } from "react-icons/fa"
 import { FaArrowAltCircleDown } from "react-icons/fa"
 import { useAddress, useContract, useContractRead, useContractWrite } from '@thirdweb-dev/react'
-import { tokenStakingAddress } from '../../../contracts'
+import { tokenStakingAddress } from '../../../constants'
 import ERC20Staking from "../../../abi/ERC20Staking.json"
 import { TransactionError } from '@thirdweb-dev/sdk'
 import { formatCommify } from '../../../support/formatters'

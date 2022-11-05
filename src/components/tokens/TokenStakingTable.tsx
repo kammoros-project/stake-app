@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import ERC20Staking from "../../abi/ERC20Staking.json"
 import _ from "lodash"
 import Spin from "../support/Spin"
-import { tokenStakingAddress } from "../../contracts"
+import { tokenStakingAddress } from "../../constants"
 import { formatCommify, formatCountdown, formatSimplePercent } from "../../support/formatters"
 import moment from "moment"
 

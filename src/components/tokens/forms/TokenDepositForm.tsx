@@ -2,13 +2,14 @@ import { useAddress, useContract, useContractRead, useContractWrite } from "@thi
 import { BigNumber, ethers } from "ethers";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FaArrowAltCircleUp, FaCheckCircle } from "react-icons/fa"
-import { tokenStakingAddress } from "../../../contracts";
+import { tokenStakingAddress } from "../../../constants";
 import ERC20Staking from "../../../abi/ERC20Staking.json"
 import ERC20 from "../../../abi/KMCToken.json"
 import { FaSpinner } from "react-icons/fa"
 import { TransactionError } from "@thirdweb-dev/sdk";
 import { useEffect, useState } from "react";
 import { formatCommify } from "../../../support/formatters";
+import { SmartContract } from "@thirdweb-dev/sdk/dist/declarations/src/evm/contracts/smart-contract";
 
 type Inputs = {
     amount: string,
@@ -42,6 +43,18 @@ export default function TokenDepositForm() {
         if ((allowance as BigNumber).lt(balanceOf)) {
             await approve([tokenStakingAddress, ethers.constants.MaxUint256])
         }
+        // console.log("amount", amount)
+        // const gasCostInGwei = await (tokenStakingContract as SmartContract).estimator.currentGasPriceInGwei();
+        // console.log("gasCostInGwei", gasCostInGwei)
+        // const gasLimitOfClaim = await (tokenStakingContract as SmartContract).estimator.gasCostOf("depositToken", [amount]);
+        // console.log("gasLimitOfClaim", gasLimitOfClaim)
+        // const gasCostOfDeposit = await (tokenStakingContract as SmartContract).estimator.gasCostOf("depositToken", [amount]);
+        // console.log("gasCostOfDeposit", gasCostOfDeposit)
+
+        (tokenStakingContract as SmartContract).interceptor.overrideNextTransaction(() => ({
+            gasLimit: 300000,
+        }));
+
         await depositToken([amount])
     };
 

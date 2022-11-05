@@ -1,3 +1,5 @@
+import { ChainId } from "@thirdweb-dev/sdk"
+
 export const nftStakingContracts = [
     { name: "Cinnamon NFT", address: "0x5DcC100d0882d044493AbDC7Dcd36340c2dC0d76", nft: true },
     { name: "Amazon Staking", address: "0xcDb0aD27EAffb967ad6F7887a3E86397a260f350", nft: true },
@@ -7,3 +9,5 @@ export const nftStakingContracts = [
 ]
 
 export const tokenStakingAddress = "0x1875C1D0cC2727Ec1A74f90dB591A80d155B0845"
+
+export const desiredChainId = ChainId.BinanceSmartChainMainnet

@@ -2,7 +2,7 @@ import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
 import { BigNumber } from "ethers"
 import { useState } from "react"
 import { FaArrowAltCircleDown } from "react-icons/fa"
-import { tokenStakingAddress } from "../../../contracts"
+import { tokenStakingAddress } from "../../../constants"
 import TokenWithdrawAllDialog from "../dialogs/TokenWithdrawAllDialog"
 import ERC20Staking from "../../../abi/ERC20Staking.json"
 
