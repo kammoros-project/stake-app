@@ -12,7 +12,7 @@ const container = document.getElementById("root");
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <ThirdwebProvider desiredChainId={activeChainId}>
+    <ThirdwebProvider desiredChainId={activeChainId} supportedChains={[activeChainId]}>
       <App />
     </ThirdwebProvider>
   </React.StrictMode>
