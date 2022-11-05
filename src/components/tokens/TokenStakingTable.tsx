@@ -171,7 +171,7 @@ function TokenStakingTable() {
     return (
         <>
             {isLoading ? <div>Loading...</div> : error ? <div>{JSON.stringify(error)}</div> : <>
-                <div className="bg-slate-700 w-full p-4">
+                <div className="bg-slate-700 w-full p-4 rounded-lg">
                     <table className="table-auto w-full">
                         <thead>
                             <tr className="hidden lg:table-row">
