@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { formatCommify } from "../../../support/formatters";
 import { useContractFunction, useEthers, useTokenAllowance, useTokenBalance } from "@usedapp/core";
 import useToken from "../../../hooks/ERC20Staking/useToken";
-import StateDialog from "./StateDialog";
+import StateDialog from "../../dialogs/StateDialog";
 
 type Inputs = {
     amount: string,
@@ -119,15 +119,6 @@ export default function TokenDepositForm() {
             description={stateDeposit.transaction?.hash}
         />)
     }
-
-    // if (stateApproval.status === "Success") {
-    //     return (<StateDialog 
-    //         heading="Approval Succeeded"
-    //         icon={<FaCheckCircle className="text-emerald-500 h-6 w-6" />}
-    //         subheading={stateApproval.transaction?.hash}
-    //         description="Your tokens were successfully approved"
-    //     />)
-    // }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">

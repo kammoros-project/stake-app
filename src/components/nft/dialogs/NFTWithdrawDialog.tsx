@@ -17,7 +17,7 @@ function LoadingView({ tokenIds }: IStatusView) {
             <h4 className="text-sm text-slate-400 uppercase">Step 1 of 1</h4>
             <FaSpinner className="animate-spin h-6 w-6" />
             <h3 className="font-semibold uppercase text-slate-900">Withdrawing NFT(s)</h3>
-            <h3 className="font-semibold uppercase text-slate-400">{tokenIds.map((bn, key) => <span key={key}>#{bn.toString()}, </span>)}</h3>
+            <h3 className="font-semibold uppercase text-slate-400">{tokenIds.map((bn) => bn.toString())}</h3>
             <p className="text-slate-400">Confirm this transaction in your wallet</p>
         </div>
     )
