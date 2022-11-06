@@ -1,4 +1,4 @@
-import { ChainId } from "@thirdweb-dev/sdk"
+import { BSC } from "@usedapp/core"
 
 export const nftStakingContracts = [
     { name: "Cinnamon NFT", address: "0x5DcC100d0882d044493AbDC7Dcd36340c2dC0d76", nft: true },
@@ -10,4 +10,5 @@ export const nftStakingContracts = [
 
 export const tokenStakingAddress = "0x1875C1D0cC2727Ec1A74f90dB591A80d155B0845"
 
-export const desiredChainId = ChainId.BinanceSmartChainMainnet
+export const desiredChainId = BSC.chainId
+export const desiredRpc = "https://bsc-dataseed1.binance.org"

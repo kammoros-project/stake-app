@@ -3,10 +3,9 @@ import { INFTWithdrawDialog } from '../../../types/dialogs'
 import DialogWrapper from '../../dialogs/DialogWrapper'
 import { FaCheckCircle, FaSpinner, FaSync, FaTimes } from "react-icons/fa"
 import { FaArrowAltCircleDown } from "react-icons/fa"
-import { useContract, useContractWrite } from '@thirdweb-dev/react'
 import ERC721Staking from "../../../abi/ERC721Staking.json"
-import { BigNumber } from 'ethers'
-import { TransactionError } from '@thirdweb-dev/sdk'
+import { BigNumber, Contract } from 'ethers'
+import { useContractFunction } from '@usedapp/core'
 
 interface IStatusView {
     tokenIds: BigNumber[]
@@ -24,13 +23,13 @@ function LoadingView({ tokenIds }: IStatusView) {
     )
 }
 
-function ErrorView({ error, withdraw }: { error: unknown, withdraw: () => void }) {
+function ErrorView({ error, withdraw }: { error: string | undefined, withdraw: () => void }) {
     return (
         <div className="flex flex-col gap-4 items-center text-center mb-8">
             <h4 className="text-sm text-slate-400 uppercase">Error</h4>
             <h3 className="font-semibold uppercase text-red-900">Oops! Something went wrong.</h3>
             <p className="text-slate-400 w-full text-xs font-mono">
-                {(error as TransactionError).toString()}
+                {error}
             </p>
             <button
                 type="button"
@@ -60,11 +59,11 @@ function SuccessView({ tokenIds }: IStatusView) {
 
 export default function NFTWithdrawDialog({ contractAddress, tokenIds, isOpen, openModal, closeModal }: INFTWithdrawDialog) {
 
-    const { contract } = useContract(contractAddress, ERC721Staking.abi)
-    const { mutateAsync: withdrawNFT, status, error } = useContractWrite(contract, "withdrawNFT");
+    const contract = new Contract(contractAddress, ERC721Staking.abi)
+    const { state, send } = useContractFunction(contract, 'withdrawNFT', { transactionName: 'Withdraw NFT' })
 
     async function withdraw() {
-        await withdrawNFT([tokenIds])
+        await send(tokenIds)
     }
 
     return (
@@ -80,10 +79,11 @@ export default function NFTWithdrawDialog({ contractAddress, tokenIds, isOpen, o
                     </div>
                 </Dialog.Title>
 
-                {status === "loading" && <LoadingView tokenIds={tokenIds} />}
-                {status === "error" && <ErrorView error={error} withdraw={withdraw} />}
-                {status === "success" && <SuccessView tokenIds={tokenIds} />}
-                {status === "idle" &&
+                {state.status === "Mining" && <LoadingView tokenIds={tokenIds} />}
+                {state.status === "PendingSignature" && <LoadingView tokenIds={tokenIds} />}
+                {state.status === "Fail" && <ErrorView error={state.errorMessage} withdraw={withdraw} />}
+                {state.status === "Success" && <SuccessView tokenIds={tokenIds} />}
+                {state.status === "None" &&
                     <>
                         <div className='text-center'>
                         <h3 className="font-semibold uppercase text-slate-400">{tokenIds.map((bn, key) => <span key={key}>#{bn.toString()}, </span>)}</h3>

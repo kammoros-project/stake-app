@@ -1,6 +1,6 @@
-import { useContract, useContractRead } from "@thirdweb-dev/react";
 import { BigNumber } from "ethers";
 import { useState, useEffect } from "react";
+import useTokenOfOwnerByIndex from "../../../hooks/DropERC721/useTokenOfOwnerByIndex";
 import StakedNFT from "./StakedNFT";
 
 interface IStakedNFTFilter {
@@ -12,9 +12,7 @@ interface IStakedNFTFilter {
 
 export default function StakedNFTFilter({ contractAddress, nftDropAddress, index, depositedTokenIdsForAddress }: IStakedNFTFilter) {
 
-    const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
-    const { data: tokenId } = useContractRead(nftDropContract, "tokenOfOwnerByIndex", contractAddress, index)
-
+    const tokenId = useTokenOfOwnerByIndex(nftDropAddress, contractAddress, index)
     const [isDelegated, setIsDelegated] = useState(false)
 
     useEffect(() => {

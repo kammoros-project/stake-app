@@ -1,16 +1,15 @@
-import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react"
 import { BigNumber } from "ethers"
 import { useState } from "react"
 import { FaArrowAltCircleDown } from "react-icons/fa"
 import { tokenStakingAddress } from "../../../constants"
 import TokenWithdrawAllDialog from "../dialogs/TokenWithdrawAllDialog"
-import ERC20Staking from "../../../abi/ERC20Staking.json"
+import { useEthers } from "@usedapp/core"
+import useBalanceOf from "../../../hooks/ERC20Staking/useBalanceOf"
 
 export default function TokenWithdrawAllButton() {
 
-    const address = useAddress()
-    const { contract: tokenStakingContract } = useContract(tokenStakingAddress, ERC20Staking.abi)
-    const { data: balance } = useContractRead(tokenStakingContract, "balanceOf", address)
+    const { account } = useEthers()
+    const balanceOf = useBalanceOf(tokenStakingAddress, account)
     
     let [isOpen, setIsOpen] = useState(false)
 
@@ -23,9 +22,9 @@ export default function TokenWithdrawAllButton() {
     }
 
     function isDisabled(): boolean {
-        if (!address) return true
-        if (!(balance instanceof BigNumber)) return true
-        if (balance.lte(0)) return true
+        if (!account) return true
+        if (!(balanceOf instanceof BigNumber)) return true
+        if (balanceOf.lte(0)) return true
         return false
     }
 

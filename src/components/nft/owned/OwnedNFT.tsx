@@ -1,6 +1,6 @@
-import { useContract, useContractRead } from "@thirdweb-dev/react"
 import { BigNumber } from "ethers"
 import { useState, useEffect } from "react"
+import useTokenURI from "../../../hooks/DropERC721/useTokenURI"
 import NFTDepositButton from "../buttons/NFTDepositButton"
 
 const REPLACE_FROM = "ipfs://"
@@ -19,8 +19,7 @@ interface IMetadata {
 
 export default function OwnedNFT({ contractAddress, nftDropAddress, tokenId }: IOwnedNFT) {
 
-    const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
-    const { data: tokenURI } = useContractRead(nftDropContract, "tokenURI", tokenId)
+    const tokenURI = useTokenURI(nftDropAddress, tokenId)
     const [metadata, setMetadata] = useState<IMetadata>()
 
     useEffect(() => {

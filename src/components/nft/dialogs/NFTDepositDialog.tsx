@@ -2,13 +2,16 @@ import { Dialog } from '@headlessui/react'
 import { INFTDepositDialog } from '../../../types/dialogs'
 import DialogWrapper from '../../dialogs/DialogWrapper'
 import { FaArrowAltCircleUp, FaCheckCircle, FaSpinner, FaTimes } from "react-icons/fa"
-import { useAddress, useContract, useContractRead, useContractWrite } from '@thirdweb-dev/react'
+import { BigNumber, Contract } from 'ethers'
+import { useContractFunction, useEthers } from '@usedapp/core'
+import useNFTCollection from '../../../hooks/ERC721Staking/useNFTCollection'
+import DropERC721 from "../../../abi/DropERC721.json"
 import ERC721Staking from "../../../abi/ERC721Staking.json"
-import { TransactionError } from '@thirdweb-dev/sdk'
-import { BigNumber } from 'ethers'
+import { useEffect, useState } from 'react'
+import useIsApprovedForAll from '../../../hooks/DropERC721/useIsApprovedForAll'
 
 interface IError {
-    error: TransactionError
+    error: string | undefined
 }
 
 interface IDepositView {
@@ -32,7 +35,7 @@ function ApprovalError({ error }: IError) {
             <h4 className="text-sm text-slate-400 uppercase">Error</h4>
             <h3 className="font-semibold uppercase text-red-900">Oops! Something went wrong.</h3>
             <p className="text-slate-400 w-full text-xs font-mono">
-                {error.toString()}
+                {error}
             </p>
         </div>
     )
@@ -58,7 +61,7 @@ function DepositError({ error }: IError) {
             <h4 className="text-sm text-slate-400 uppercase">Error</h4>
             <h3 className="font-semibold uppercase text-red-900">Oops! Something went wrong.</h3>
             <p className="text-slate-400 w-full text-xs font-mono">
-                {error.toString()}
+                {error}
             </p>
         </div>
     )
@@ -80,23 +83,28 @@ function DepositSuccess({ tokenIds }: IDepositView) {
 
 export default function NFTDepositDialog({ tokenIds, contractAddress, isOpen, openModal, closeModal }: INFTDepositDialog) {
 
-    const address = useAddress()
-    const { contract: stakingContract } = useContract(contractAddress, ERC721Staking.abi)
-    const { data: nftDropAddress } = useContractRead(stakingContract, "nftCollection")
-    const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
-    const { mutateAsync: approve, isLoading: isApproving, status: statusApproval, error: errorApproval } = useContractWrite(nftDropContract, "setApprovalForAll");
-    const { mutateAsync: depositNFT, isLoading: isDepositing, status: statusDeposit, error: errorDeposit } = useContractWrite(stakingContract, "depositNFT")
+    const { account } = useEthers()
+    const stakingContract = new Contract(contractAddress, ERC721Staking.abi)
+    const nftDropAddress = useNFTCollection(contractAddress)
+    const [nftDropContract, setNFTDropContract] = useState<Contract>()
+    const isApprovedForAll = useIsApprovedForAll(nftDropAddress, account, contractAddress)
+
+    const { state: statusApproval, send: approve } = useContractFunction(nftDropContract, 'setApprovalForAll', { transactionName: 'Set Approval For All' })
+    const { state: statusDeposit, send: depositNFT } = useContractFunction(stakingContract, 'depositNFT', { transactionName: 'Deposit NFT' })
+
+    useEffect(() => {
+        const contract = new Contract(nftDropAddress, DropERC721)
+        setNFTDropContract(contract)
+    }, [nftDropAddress])
 
     async function deposit() {
-        if (!address) return;
+        if (!account) return;
 
-        const isApproved = await nftDropContract?.isApproved(address, contractAddress)
-
-        if (!isApproved) {
-            await approve([contractAddress, true])
+        if (!isApprovedForAll) {
+            await approve(contractAddress, true)
         }
 
-        await depositNFT([tokenIds])
+        await depositNFT(tokenIds)
     }
 
     return (
@@ -111,13 +119,15 @@ export default function NFTDepositDialog({ tokenIds, contractAddress, isOpen, op
                 </div>
             </Dialog.Title>
             <div className="mt-8">
-                {statusApproval === "error" && <ApprovalError error={errorApproval as TransactionError} />}
-                {statusApproval === "loading" && <ApprovalLoading />}
-                {statusDeposit === "error" && <DepositError error={errorDeposit as TransactionError} />}
-                {statusDeposit === "loading" && <DepositLoading tokenIds={tokenIds} />}
-                {statusDeposit === "success" && <DepositSuccess tokenIds={tokenIds} />}
+                {statusApproval.status === "Fail" && <ApprovalError error={statusApproval.errorMessage} />}
+                {statusApproval.status === "PendingSignature" && <ApprovalLoading />}
+                {statusApproval.status === "Mining" && <ApprovalLoading />}
+                {statusDeposit.status === "Fail" && <DepositError error={statusDeposit.errorMessage} />}
+                {statusDeposit.status === "PendingSignature" && <DepositLoading tokenIds={tokenIds} />}
+                {statusDeposit.status === "Mining" && <DepositLoading tokenIds={tokenIds} />}
+                {statusDeposit.status === "Success" && <DepositSuccess tokenIds={tokenIds} />}
 
-                {(statusApproval === "idle" && statusDeposit === "idle") &&
+                {(statusApproval.status === "None" && statusDeposit.status === "None") &&
                     <div className='text-center my-4'>
                         <h3 className="font-semibold uppercase text-emerld-900">Deposit NFT(s)</h3>
                         <h4 className="font-semibold uppercase text-slate-400">
@@ -125,7 +135,7 @@ export default function NFTDepositDialog({ tokenIds, contractAddress, isOpen, op
                         </h4>
                     </div>
                 }
-                {!isApproving && !isDepositing && statusDeposit !== "success" &&
+                {statusDeposit.status !== "Success" &&
                     <button className="w-full text-xl font-semibold text-white py-3 px-4 bg-emerald-500 rounded-md hover:border-emerald-500 hover:bg-emerald-400" onClick={deposit}>
                         <div className="flex items-center justify-center gap-2">
                             <FaArrowAltCircleUp className="h-4" />

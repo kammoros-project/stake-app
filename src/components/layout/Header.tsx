@@ -1,6 +1,6 @@
-import { ConnectWallet } from "@thirdweb-dev/react";
 import Container from "./Container";
 import logo from "../../assets/logo.png"
+import ConnectButton from "../support/ConnectButton";
 
 function Header() {
     return (
@@ -12,7 +12,7 @@ function Header() {
                         <span className="uppercase hidden sm:block text-sm md:text-xl font-semibold">Kammoros Staking</span>
                     </div>
                     <div>
-                        <ConnectWallet accentColor="#f97316" colorMode="light"/>
+                        <ConnectButton />
                     </div>
                 </div>
             </Container>

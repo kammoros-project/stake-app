@@ -1,6 +1,7 @@
-import { useContract, useContractRead } from "@thirdweb-dev/react"
 import { BigNumber } from "ethers"
 import { useState, useEffect } from "react"
+import useTokenURI from "../../../hooks/DropERC721/useTokenURI"
+import Loading from "../../support/Loading"
 import NFTWithdrawButton from "../buttons/NFTWithdrawButton"
 
 const REPLACE_FROM = "ipfs://"
@@ -19,8 +20,7 @@ interface IMetadata {
 
 export default function StakedNFT({ contractAddress, nftDropAddress, tokenId }: IStakedNFT) {
 
-    const { contract: nftDropContract } = useContract(nftDropAddress, "nft-drop");
-    const { data: tokenURI } = useContractRead(nftDropContract, "tokenURI", tokenId)
+    const tokenURI = useTokenURI(nftDropAddress, tokenId)
     const [metadata, setMetadata] = useState<IMetadata>()
 
     useEffect(() => {
@@ -51,11 +51,11 @@ export default function StakedNFT({ contractAddress, nftDropAddress, tokenId }: 
                 </div>
                 : <div className="flex justify-between items-center">
                 <div className="flex gap-4 items-center">
-                    <div className="animate-pulse bg-slate-200 w-12 h-4 rounded-full" />
-                    <div className="animate-pulse bg-slate-200 w-24 h-4 rounded-full" />
+                    <Loading width="w-16" />
+                    <Loading width="w-16" />
                 </div>
                 <div>
-                    <div className="animate-pulse bg-slate-200 w-24 h-4 rounded-full" />
+                    <Loading width="w-16" />
                 </div>
             </div>}
         </>

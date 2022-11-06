@@ -3,11 +3,12 @@ import { IDepositDialog } from '../../../types/dialogs'
 import DialogWrapper from '../../dialogs/DialogWrapper'
 import { FaCheckCircle, FaSpinner, FaSync, FaTimes } from "react-icons/fa"
 import { FaArrowAltCircleDown } from "react-icons/fa"
-import { useAddress, useContract, useContractRead, useContractWrite } from '@thirdweb-dev/react'
 import { tokenStakingAddress } from '../../../constants'
 import ERC20Staking from "../../../abi/ERC20Staking.json"
-import { TransactionError } from '@thirdweb-dev/sdk'
 import { formatCommify } from '../../../support/formatters'
+import { useContractFunction, useEthers } from '@usedapp/core'
+import useBalanceOf from '../../../hooks/ERC20Staking/useBalanceOf'
+import { Contract } from 'ethers'
 
 function LoadingView() {
     return (
@@ -21,13 +22,13 @@ function LoadingView() {
     )
 }
 
-function ErrorView({ error, withdraw }: { error: unknown, withdraw: () => void }) {
+function ErrorView({ error, withdraw }: { error: string | undefined, withdraw: () => void }) {
     return (
         <div className="flex flex-col gap-4 items-center text-center mb-8">
             <h4 className="text-sm text-slate-400 uppercase">Error</h4>
             <h3 className="font-semibold uppercase text-red-900">Oops! Something went wrong.</h3>
             <p className="text-slate-400 w-full text-xs font-mono">
-                {(error as TransactionError).toString()}
+                {error}
             </p>
             <button
                 type="button"
@@ -56,13 +57,13 @@ function SuccessView() {
 
 export default function TokenWithdrawAllDialog({ isOpen, openModal, closeModal }: IDepositDialog) {
 
-    const address = useAddress()
-    const { contract: stakingContract } = useContract(tokenStakingAddress, ERC20Staking.abi)
-    const { data: balanceOf } = useContractRead(stakingContract, "balanceOf", address)
-    const { mutateAsync: withdrawToken, status, error } = useContractWrite(stakingContract, "withdrawToken")
+    const { account } = useEthers()
+    const balanceOf = useBalanceOf(tokenStakingAddress, account)
+    const contract = new Contract(tokenStakingAddress, ERC20Staking.abi)
+    const { state, send } = useContractFunction(contract, 'withdrawToken', { transactionName: 'Withdraw' })
 
     async function withdraw() {
-        await withdrawToken([])
+        await send()
     }
 
     return (
@@ -77,10 +78,11 @@ export default function TokenWithdrawAllDialog({ isOpen, openModal, closeModal }
                         <button onClick={closeModal}><FaTimes /></button>
                     </div>
                 </Dialog.Title>
-                {status === "loading" && <LoadingView />}
-                {status === "error" && <ErrorView error={error} withdraw={withdraw} />}
-                {status === "success" && <SuccessView />}
-                {status === "idle" &&
+                {state.status === "Mining" && <LoadingView />}
+                {state.status === "PendingSignature" && <LoadingView />}
+                {state.status === "Fail" && <ErrorView error={state.errorMessage} withdraw={withdraw} />}
+                {state.status === "Success" && <SuccessView />}
+                {state.status === "None" &&
                     <>
                         <div className='text-center font-semibold'>
                             <div>{formatCommify(balanceOf)}</div>

@@ -1,15 +1,14 @@
-import { useAddress, useContract, useContractRead, useContractWrite } from "@thirdweb-dev/react";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, Contract, ethers } from "ethers";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FaArrowAltCircleUp, FaCheckCircle } from "react-icons/fa"
 import { tokenStakingAddress } from "../../../constants";
 import ERC20Staking from "../../../abi/ERC20Staking.json"
 import ERC20 from "../../../abi/KMCToken.json"
 import { FaSpinner } from "react-icons/fa"
-import { TransactionError } from "@thirdweb-dev/sdk";
 import { useEffect, useState } from "react";
 import { formatCommify } from "../../../support/formatters";
-import { SmartContract } from "@thirdweb-dev/sdk/dist/declarations/src/evm/contracts/smart-contract";
+import { useContractFunction, useEthers, useTokenAllowance, useTokenBalance } from "@usedapp/core";
+import useToken from "../../../hooks/ERC20Staking/useToken";
 
 type Inputs = {
     amount: string,
@@ -17,22 +16,23 @@ type Inputs = {
 
 export default function TokenDepositForm() {
 
-    const address = useAddress()
-    const { contract: tokenStakingContract } = useContract(tokenStakingAddress, ERC20Staking.abi)
-    const { data: tokenAddress } = useContractRead(tokenStakingContract, "token");
-    const { contract: tokenContract } = useContract(tokenAddress, ERC20.abi)
-    const { data: balanceOf } = useContractRead(tokenContract, "balanceOf", address);
+    const { account } = useEthers()
+    const tokenAddress = useToken(tokenStakingAddress)
+    const balanceOf = useTokenBalance(tokenAddress, account)
+    const allowance = useTokenAllowance(tokenAddress, account, tokenStakingAddress)
 
-    const { data: allowance } = useContractRead(tokenContract, "allowance", address, tokenStakingAddress)
-    const { mutateAsync: approve, status: approvalStatus, error: approvalError } = useContractWrite(tokenContract, "approve");
-    const { mutateAsync: depositToken, status: depositStatus, error: depositError } = useContractWrite(tokenStakingContract, "depositToken");
+    const stakingContract = new Contract(tokenStakingAddress, ERC20Staking.abi)
+    const tokenContract = new Contract(tokenAddress, ERC20.abi)
+
+    const { state: statusApproval, send: approve } = useContractFunction(tokenContract, 'approve', { transactionName: 'Approve' })
+    const { state: statusDeposit, send: depositToken } = useContractFunction(stakingContract, 'depositToken', { transactionName: 'Deposit' })
 
     const { register, handleSubmit, setValue, setFocus, formState: { errors } } = useForm<Inputs>();
 
     const [amount, setAmount] = useState<BigNumber>()
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        if (!address) return
+        if (!account) return
         if (!balanceOf) return
         if (!allowance) return
 
@@ -40,33 +40,24 @@ export default function TokenDepositForm() {
         if (amount.lte(0)) return
         setAmount(amount)
 
-        if ((allowance as BigNumber).lt(balanceOf)) {
-            await approve([tokenStakingAddress, ethers.constants.MaxUint256])
-        }
-        // console.log("amount", amount)
-        // const gasCostInGwei = await (tokenStakingContract as SmartContract).estimator.currentGasPriceInGwei();
-        // console.log("gasCostInGwei", gasCostInGwei)
-        // const gasLimitOfClaim = await (tokenStakingContract as SmartContract).estimator.gasCostOf("depositToken", [amount]);
-        // console.log("gasLimitOfClaim", gasLimitOfClaim)
-        // const gasCostOfDeposit = await (tokenStakingContract as SmartContract).estimator.gasCostOf("depositToken", [amount]);
-        // console.log("gasCostOfDeposit", gasCostOfDeposit)
-
-        // (tokenStakingContract as SmartContract).interceptor.overrideNextTransaction(() => ({
-        //     gasLimit: 300000,
-        // }));
-
-        await depositToken([amount])
+        // if ((allowance as BigNumber).lt(balanceOf)) {
+        //     await approve(tokenStakingAddress, ethers.constants.MaxUint256)
+        // }
+        await approve(tokenStakingAddress, amount)
+        await depositToken(amount)
     };
 
     function setMax() {
-        setValue("amount", ethers.utils.formatEther(balanceOf))
+        if (balanceOf) {
+            setValue("amount", ethers.utils.formatEther(balanceOf))
+        }
     }
 
     useEffect(() => {
         setFocus("amount")
     }, [setFocus])
 
-    if (approvalStatus === "loading") {
+    if (statusApproval.status === "Mining" || statusApproval.status === "PendingSignature") {
         return (
             <div className="flex flex-col gap-4 items-center text-center mb-8">
                 <h4 className="text-sm text-slate-400 uppercase">Step 1 of 2</h4>
@@ -78,19 +69,19 @@ export default function TokenDepositForm() {
         )
     }
 
-    if (approvalStatus === "error") {
+    if (statusApproval.status === "Fail") {
         return (
             <div className="flex flex-col gap-4 items-center text-center mb-8">
                 <h4 className="text-sm text-slate-400 uppercase">Error</h4>
                 <h3 className="font-semibold uppercase text-red-900">Oops! Something went wrong.</h3>
                 <p className="text-slate-400 w-full text-xs font-mono">
-                    {(approvalError as TransactionError).toString()}
+                    {statusApproval.errorMessage}
                 </p>
             </div>
         )
     }
 
-    if (depositStatus === "loading") {
+    if (statusDeposit.status === "Mining" || statusDeposit.status === "PendingSignature") {
         return (
             <div className="flex flex-col gap-4 items-center text-center mb-8">
                 <h4 className="text-sm text-slate-400 uppercase">Step 2 of 2</h4>
@@ -102,19 +93,19 @@ export default function TokenDepositForm() {
         )
     }
 
-    if (depositStatus === "error") {
+    if (statusDeposit.status === "Fail") {
         return (
             <div className="flex flex-col gap-4 items-center text-center mb-8">
                 <h4 className="text-sm text-slate-400 uppercase">Error</h4>
                 <h3 className="font-semibold uppercase text-red-900">Oops! Something went wrong.</h3>
                 <p className="text-slate-400 w-full text-xs font-mono">
-                    {(depositError as TransactionError).toString()}
+                    {statusDeposit.errorMessage}
                 </p>
             </div>
         )
     }
 
-    if (depositStatus === "success") {
+    if (statusDeposit.status === "Success") {
         return (
             <div className="flex flex-col gap-4 items-center text-center mb-8">
                 <h4 className="text-sm text-slate-400 uppercase">Congratulations</h4>
@@ -135,7 +126,7 @@ export default function TokenDepositForm() {
             </div>
 
             <div className="flex">
-                <input autoFocus={true} {...register("amount", { required: true })} className="grow outline-0 border-2 border-r-0 border-emerald-500 text-3xl py-1 px-2 rounded-l-md text-slate-600" />
+                <input autoFocus={true} {...register("amount", { required: true })} className="w-full outline-0 border-2 border-r-0 border-emerald-500 text-3xl py-1 px-2 rounded-l-md rounded-r-none text-slate-600" />
                 <button className="text-xl font-semibold text-white py-1 px-4 bg-emerald-500 rounded-r-md hover:border-emerald-500 hover:bg-emerald-400 disabled:bg-slate-500" onClick={() => setMax()} type="button">MAX</button>
             </div>
 
