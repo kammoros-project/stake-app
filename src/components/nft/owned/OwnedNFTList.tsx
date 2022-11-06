@@ -36,7 +36,7 @@ export default function OwnedNFTList({ contractAddress }: IStakedNFTList) {
         <div className="bg-slate-700 text-slate-50 p-4 rounded-lg">
             <div className="flex flex-col justify-between gap-4 h-full">
                 <div className="flex justify-between items-center text-slate-50">
-                    <div className="font-semibold flex gap-1 items-center">
+                    <div className="font-semibold flex gap-1 items-center text-white text-xs font-semibold uppercase">
                         {balanceOf ?
                             <div>{balanceOf.toNumber()}</div>
                             :

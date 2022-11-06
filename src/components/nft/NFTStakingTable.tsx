@@ -14,7 +14,8 @@ function NFTStakingTable({ contractAddress }: INFTStakingTable) {
     const nbRounds = useNbRounds(contractAddress)
 
     return (
-        <div className="bg-slate-700 w-full p-4 rounded-lg">
+        <div className="bg-slate-700 w-full p-4 rounded-lg flex flex-col gap-4">
+            <div className="text-white text-xs font-semibold uppercase">Rounds ({nbRounds && nbRounds.toString()})</div>
             <table className="table-auto w-full">
                 <thead>
                     <tr className="hidden lg:table-row">
