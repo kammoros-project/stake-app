@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers"
 import _ from "lodash"
 import { tokenStakingAddress } from "../../constants"
 import useNbRounds from "../../hooks/ERC20Staking/useNbRounds"
@@ -29,7 +30,7 @@ function TokenStakingTable() {
                     </tr>
                 </thead>
                 <tbody>
-                    {nbRounds ? _.times(nbRounds, (index) => <RoundRow key={index} index={index} />) : <tr><td colSpan={15} className="animate-pulse text-center text-white text-xs text-semibold">Loading...</td></tr>}
+                    {nbRounds ? _.times(nbRounds, (index) => <RoundRow key={index} index={BigNumber.from(index)} />) : <tr><td colSpan={15} className="animate-pulse text-center text-white text-xs text-semibold">Loading...</td></tr>}
                 </tbody>
             </table>
         </div>

@@ -4,7 +4,7 @@ import ERC721Staking from "../../abi/ERC721Staking.json"
 
 export default function useRound(
     contractAddress: string | Falsy,
-    index: number | BigNumber | Falsy
+    index: BigNumber | Falsy
   ) {
     const { value, error } =
       useCall(

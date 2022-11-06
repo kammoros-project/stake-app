@@ -4,7 +4,7 @@ import ERC20Staking from "../../abi/ERC20Staking.json"
 
 export default function useETHClaimedForRoundByAddress(
     contractAddress: string | Falsy,
-    roundIndex: number | BigNumber | Falsy,
+    roundIndex: BigNumber | Falsy,
     address: string | Falsy
   ) {
     const { value, error } =

@@ -4,7 +4,7 @@ import ERC20Staking from "../../abi/ERC20Staking.json"
 
 export default function useAmountStakedForRoundByAddress(
     contractAddress: string | Falsy,
-    index: number | BigNumber | Falsy,
+    index: BigNumber | Falsy,
     address: string | Falsy
   ): BigNumber | undefined {
     const { value, error } =

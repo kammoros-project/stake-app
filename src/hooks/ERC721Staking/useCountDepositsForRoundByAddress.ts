@@ -4,7 +4,7 @@ import ERC721Staking from "../../abi/ERC721Staking.json"
 
 export default function useCountDepositsForRoundByAddress(
     contractAddress: string | Falsy,
-    roundIndex: number | BigNumber | Falsy,
+    roundIndex: BigNumber | Falsy,
     address: string | Falsy
   ) {
     const { value, error } =

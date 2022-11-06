@@ -17,7 +17,7 @@ import ERC20Staking from "../../abi/ERC20Staking.json"
 import Loading from "../support/Loading"
 
 interface IRoundRow {
-    index: number
+    index: BigNumber
 }
 
 const tdClass = "px-3 py-4 text-right border-t border-slate-500 text-sm text-slate-50"
@@ -80,7 +80,7 @@ export default function RoundRow({ index }: IRoundRow) {
     return (
         <>
             <tr className="hidden lg:table-row">
-                <td className={tdClass}>{index}</td>
+                <td className={tdClass}>{index.toString()}</td>
                 <td className={tdClass} colSpan={2}>{startTime ? moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm") : <Loading />}</td>
                 <td className={tdClass} colSpan={2}>{endTime ? moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm") : <Loading />}</td>
                 <td className={tdClass} colSpan={2}>{startTime && endTime ? formatCountdown(round) : <Loading />}</td>
@@ -112,7 +112,7 @@ export default function RoundRow({ index }: IRoundRow) {
                 <td className="flex flex-col gap-2 text-">
                     <div className="flex justify-between items-center">
                         <span>Round</span>
-                        <span>{index}</span>
+                        <span>{index.toString()}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span>Start Time</span>

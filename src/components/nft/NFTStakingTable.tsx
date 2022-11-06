@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers"
 import _ from "lodash"
 import useNbRounds from "../../hooks/ERC721Staking/useNbRounds"
 import RoundRow from "./RoundRow"
@@ -31,7 +32,7 @@ function NFTStakingTable({ contractAddress }: INFTStakingTable) {
                     </tr>
                 </thead>
                 <tbody>
-                    {nbRounds ? _.times(nbRounds, (index) => <RoundRow key={index} contractAddress={contractAddress} index={index} />) : <></>}
+                    {nbRounds ? _.times(nbRounds, (index) => <RoundRow key={index} contractAddress={contractAddress} index={BigNumber.from(index)} />) : <></>}
                 </tbody>
             </table>
         </div>
