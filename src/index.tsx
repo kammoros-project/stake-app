@@ -2,17 +2,31 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { ChainId, ThirdwebProvider } from "@thirdweb-dev/react";
 import "./styles/globals.css";
-import { desiredChainId } from "./constants";
+import { desiredChainId, desiredRpc } from "./constants";
+import { DAppProvider, Config, CoinbaseWalletConnector, MetamaskConnector } from '@usedapp/core'
+import { WalletConnectConnector } from '@usedapp/wallet-connect-connector'
+
+const config: Config = {
+  readOnlyChainId: desiredChainId,
+  readOnlyUrls: {
+    [desiredChainId]: desiredRpc,
+  },
+  connectors: {
+    metamask: new MetamaskConnector(),
+    coinbase: new CoinbaseWalletConnector(),
+    walletConnect: new WalletConnectConnector({ rpc: { [desiredChainId]: desiredRpc } }),
+  },
+  refresh: "everyBlock"
+}
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <ThirdwebProvider desiredChainId={desiredChainId} supportedChains={[desiredChainId]} >
+    <DAppProvider  config={config} >
       <App />
-    </ThirdwebProvider>
+    </DAppProvider>
   </React.StrictMode>
 );
 

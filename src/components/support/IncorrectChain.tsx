@@ -1,9 +1,9 @@
-import { useChainId } from "@thirdweb-dev/react"
+import { useEthers } from "@usedapp/core"
 import { desiredChainId } from "../../constants"
 
 export default function IncorrectChain() {
 
-    const chainId = useChainId()
+    const { chainId } = useEthers()
 
     return (
         <div className="flex flex-col gap-4 items-center text-slate-500">

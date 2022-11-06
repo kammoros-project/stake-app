@@ -2,7 +2,13 @@ const webpack = require("webpack");
 
 module.exports = function override(config) {
   const fallback = config.resolve.fallback || {};
-  config.resolve.fallback = fallback;
+  config.resolve.fallback = { 
+    ...fallback,
+    "url": require.resolve("url/"),
+    "http": require.resolve("stream-http"),
+    "https": require.resolve("https-browserify"),
+    "os": require.resolve("os-browserify/browser"),
+  };
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({
       process: "process/browser",
@@ -36,6 +42,12 @@ module.exports = function override(config) {
       {
         module: /node_modules\/@gnosis.pm/,
       },
+      {
+        module: /node_modules\/xhr2-cookies/,
+      },
+      {
+        module: /node_modules\/ethereumjs-abi/,
+      }
     ],
   };
 };

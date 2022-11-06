@@ -1,4 +1,4 @@
-import { useAddress } from "@thirdweb-dev/react"
+import { useEthers } from "@usedapp/core"
 import { BigNumber } from "ethers"
 import { useState } from "react"
 import { FaArrowAltCircleDown } from "react-icons/fa"
@@ -12,7 +12,7 @@ interface INFTWithdrawButton {
 
 export default function NFTWithdrawButton({ contractAddress, tokenIds, text = "Withdraw" }: INFTWithdrawButton) {
 
-    const address = useAddress()
+    const { account } = useEthers()
 
     let [isOpen, setIsOpen] = useState(false)
 
@@ -27,7 +27,7 @@ export default function NFTWithdrawButton({ contractAddress, tokenIds, text = "W
     }
 
     function isDisabled(): boolean {
-        if (!address) return true
+        if (!account) return true
         return false
     }
 
