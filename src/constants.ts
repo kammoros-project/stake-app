@@ -12,3 +12,5 @@ export const tokenStakingAddress = "0x1875C1D0cC2727Ec1A74f90dB591A80d155B0845"
 
 export const desiredChainId = BSC.chainId
 export const desiredRpc = "https://bsc-dataseed1.binance.org"
+
+export const baseNotificationClass = "p-4 rounded-md text-xs"
