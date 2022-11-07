@@ -15,7 +15,7 @@ const config: Config = {
   connectors: {
     metamask: new MetamaskConnector(),
     coinbase: new CoinbaseWalletConnector(),
-    walletConnect: new WalletConnectConnector({ rpc: { [desiredChainId]: desiredRpc } }),
+    walletConnect: new WalletConnectConnector({ rpc: { [desiredChainId]: desiredRpc }, chainId: desiredChainId }),
   },
   refresh: "everyBlock"
 }
