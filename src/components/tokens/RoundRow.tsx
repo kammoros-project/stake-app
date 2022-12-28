@@ -82,7 +82,7 @@ export default function RoundRow({ index }: IRoundRow) {
             <tr className="hidden lg:table-row">
                 <td className={tdClass}>{index.toString()}</td>
                 <td className={tdClass} colSpan={2}>{startTime ? moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm") : <Loading />}</td>
-                <td className={tdClass} colSpan={2}>{endTime ? moment(round.startTime.toNumber() * 1000).format("MMM Do YYYY, HH:mm") : <Loading />}</td>
+                <td className={tdClass} colSpan={2}>{endTime ? moment(round.endtime.toNumber() * 1000).format("MMM Do YYYY, HH:mm") : <Loading />}</td>
                 <td className={tdClass} colSpan={2}>{startTime && endTime ? formatCountdown(round) : <Loading />}</td>
                 <td className={tdClass}>
                     {amountStakedForRoundByAddress && amountStakedForRound ?
